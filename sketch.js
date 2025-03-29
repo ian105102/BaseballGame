@@ -66,7 +66,7 @@ const main_sketch = (p)=>{
             
         }
     }
-      
+    
     p.mouseReleased = () => {
         if (p.mouseButton === p.LEFT) {
             p.is_left_pressing = false
