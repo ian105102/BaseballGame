@@ -13,44 +13,41 @@
     這個類別會使用 Matter.js 的 World.add() 函數來將碰撞檢測添加到世界中
     這個類別會使用 Matter.js 的 Collision.collides() 函數來檢查碰撞
 */
-import { ThreeDtoTwoD } from "../../utils/ThreeDtoTwoD.js";
+import { ThreeDtoTwoD } from "../../Utils/ThreeDtoTwoD.js";
 import { IObject } from "../../IObject.js"
-export class Hitbox3Ditem  extends IObject{
-    #currentScaleX = 1;
-    #currentScaleY = 1;
-    constructor( p,centerX, centerY, sizeX, sizeY, model, world,engine, color = "#c6780a" , HitboxSizeX = 30 , HitboxSizeY = 200) {
+export class Hitbox3Ditem extends IObject {
+    #currentScale = this.p.createVector(1, 1);
+
+    constructor(p, model, world, engine, position= {x:0, y:0}, size = {x:400, y:400} ,color = "#c6780a", hitboxSize= {x:30, y:200}, rotateCenter = {x:0, y:70}) {
         super(p);
-    
-        this.view3d = new ThreeDtoTwoD(p, sizeX, sizeY, model);
-        this.centerX = centerX;
-        this.centerY = centerY;
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
+        this.p = p;
+        this.view3d = new ThreeDtoTwoD(p, size, model);
         
-        this.rotateX = 0;
-        this.rotateY = 0;
-        this.rotateZ = 0;
+        // 確保position是有效的對象
+        if (!position || typeof position.x === 'undefined' || typeof position.y === 'undefined') {
+            console.error("Invalid position provided");
+            position = {x: 0, y: 0};
+        }
+        
+        this.position = this.p.createVector(position.x, position.y);
+        this.size = this.p.createVector(size.x, size.y);
+        this.rotation3D = this.p.createVector(0, 0, 0);
         this.color = color;
+        this.rotateCenter = this.p.createVector(rotateCenter.x, rotateCenter.y);
         
-        this.rotateCenter = { x: 0, y: 70, z: 0 };
-        console.log("Hitbox3Ditem", HitboxSizeX, HitboxSizeY);
-        // Matter.js hitbox
-        this.body = Matter.Bodies.rectangle(this.centerX, this.centerY,HitboxSizeX, HitboxSizeY,
-            { 
-                isStatic: false ,
-                isSensor: true , 
-            }
-        );
-        Matter.Events.on(engine, 'collisionStart', this.onCollisionStart.bind(this));   // 註冊碰撞事件
-        Matter.Body.setCentre(this.body, { x:centerX+0 , y:centerY -70}, false);
-        Matter.Body.setPosition(this.body, { x: centerX , y: centerY  });
-        Matter.World.add(world, this.body); 
+        console.log("Hitbox3Ditem", hitboxSize.x, hitboxSize.y);
+        this.body = Matter.Bodies.rectangle(this.position.x, this.position.y, hitboxSize.x, hitboxSize.y, {
+            isStatic: false,
+            isSensor: true,
+        });
+        Matter.Body.setCentre(this.body, { x: this.position.x - rotateCenter.x, y: this.position.y - rotateCenter.y });
+        Matter.Body.setPosition(this.body, { x: this.position.x, y: this.position.y });
+        this.collisionHandler = this.onCollisionStart.bind(this);
 
-
-
-
-
+        Matter.Events.on(engine, 'collisionStart', this.collisionHandler);
+        Matter.World.add(world, this.body);
     }
+
     onCollisionStart(event) {
         event.pairs.forEach(pair => {
             let hitbox, other;
@@ -66,20 +63,18 @@ export class Hitbox3Ditem  extends IObject{
             }
         });
     }
-    // 當碰撞事件發生時的處理函數
+
     handleCollision(hitbox, otherBody) {
         console.log("HitboxItem 碰撞發生！", { hitbox, otherBody });
     }
+
     setPosition(x, y) {
-        this.centerX = x;
-        this.centerY = y;
-        Matter.Body.setPosition(this.body, { x, y });
+        this.position.set(x, y);
+        Matter.Body.setPosition(this.body, { x:x, y:y });
     }
     
     rotateEuler(x, y, z) {
-        this.rotateX = x;
-        this.rotateY = y;
-        this.rotateZ = z;
+        this.rotation3D.set(x, y, z);
         this.applyRotation(this.calculateDirectionFromEuler(x, y, z));
     }
 
@@ -119,63 +114,39 @@ export class Hitbox3Ditem  extends IObject{
         };
     }
 
-
     setScale(scaleX, scaleY) {
-        let newScaleX = scaleX / this.#currentScaleX;
-        let newScaleY = scaleY / this.#currentScaleY;
-        Matter.Body.scale(this.body, newScaleX, newScaleY);
-        this.#currentScaleX = scaleX;
-        this.#currentScaleY = scaleY;
+        let newScale = this.p.createVector(scaleX / this.#currentScale.x, scaleY / this.#currentScale.y);
+        Matter.Body.scale(this.body, newScale.x, newScale.y);
+        this.#currentScale.set(scaleX, scaleY);
     }
-    // Debug用
-    // 繪製物體的邊界框
+
     drawHitbox() {
-       
         const vertices = this.body.vertices;
-     
         this.p.noFill();
         this.p.stroke(255, 0, 0);
         this.p.beginShape();
         for (let i = 0; i < vertices.length; i++) {
-            this.p.vertex(vertices[i].x, vertices[i].y);
+            this.p.vertex(vertices[i].x - this.position.x, vertices[i].y - this.position.y  );
         }
         this.p.endShape(this.p.CLOSE);
     }
-    _on_draw(){
-      
-        this.view3d.display({ x: this.centerX, y: this.centerY }, 
-            { x: this.rotateX, y: this.rotateY, z: this.rotateZ },
-            { x: this.rotateCenter.x, y: this.rotateCenter.y, z: this.rotateCenter.z },
-            this.color, 
-            { x: 0, y: 0, z: 0 });
-        
+
+    _on_draw() {
+       
+        this.view3d.display(this.position, this.rotation3D, this.rotateCenter, this.color, { x: 0, y: 0, z: 0 });
         this.drawHitbox();
     }
-    _on_update(delta){
 
-    }
+    _on_update(delta) {}
 
-    /*
-    檢查與其他物體的碰撞
-    輸入: bodiesArray - 其他物體的陣列
-    輸出: true - 碰撞發生
-        false - 沒有碰撞
-    */
-    checkCollide(bodiesArray) {                                     
+    checkCollide(bodiesArray) {
         for (let otherBody of bodiesArray) {
-            // 過濾掉自身
             if (otherBody === this.body) continue;
-            // 檢查碰撞
             let collision = Matter.Collision.collides(this.body, otherBody);
-         
-            if(collision === null ){
-                continue;
-            }else{
+            if (collision !== null) {
                 return true;
             }
-
         }
-
-        return false; // 沒有碰撞則回傳 false
+        return false;
     }
 }

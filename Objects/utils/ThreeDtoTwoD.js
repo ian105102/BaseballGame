@@ -9,18 +9,18 @@
     
 */
 export class ThreeDtoTwoD{     
-    constructor(p, sizeX,sizeY , model){
+    constructor(p, size , model){
       
         this.p = p;
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
-        this.pg = p.createGraphics(sizeX, sizeY, p.WEBGL); 
+        this.size = size;
+   
+        this.pg = p.createGraphics(size.x, size.y, p.WEBGL); 
         this.batModel = model;
         this.pg.model(model);
      
     }
     display(position ,rotate ,rotateCenter ,color, translate ){
-      
+       
         this.pg.push();
        
         this.pg.rotateX(rotate.x); // 旋轉模型
@@ -30,13 +30,14 @@ export class ThreeDtoTwoD{
         this.pg.translate(translate.x, translate.y, translate.z);
         
         this.pg.clear();
+     
         this.pg.fill(color);
         this.pg.noStroke();
         this.pg.model(this.batModel);
         this.pg.pop();
         // 顯示 3D 畫布上的圖像
         
-        this.p.image(this.pg, position.x - this.sizeX/2, position.y - this.sizeY/2,this.sizeX ,this.sizeY); 
+        this.p.image(this.pg,  - this.size.x/2, - this.size.y,this.size.x ,this.size.y); 
 
     }
 }

@@ -11,6 +11,7 @@ import { Bat } from "../Objects/DrawableObj/Game/Bat.js"
 
 import { Hitbox3Ditem } from "../Objects/DrawableObj/Game/Hitbox3Ditem.js"
 import { AssetLoader } from "../AssetLoader.js"
+import { Character } from "../Objects/DrawableObj/Unit/Character.js"
 
 export class GameScene extends IScene{
     static instance = null
@@ -67,11 +68,13 @@ export class GameScene extends IScene{
 
 
         console.log(this.batModel)
-
-        this.bat = new Hitbox3Ditem( this.p,this.p.width/2, this.p.height/2, 400, 400,  this.batModel  ,this.World , this.engine," #c6780a");
+        
+        this.bat = new Hitbox3Ditem( this.p , this.batModel, this.World, this.engine, {x:WIDTH/2,y:HEIGHT/2});
         instance.add(this.bat);
 
+        this.Player = new Character(this.p, this.bat, this.ball)
 
+        
     }
 
     _on_update(delta){
@@ -82,11 +85,14 @@ export class GameScene extends IScene{
         //     this.ball.stop_shoot()
 
         // }
-
+        Matter.Engine.update(this.engine);
+        
         this.bat.rotateEuler(0, this.p.mouseY/100 , this.p.mouseX/100);
+        this.bat.setPosition(this.p.mouseX, this.p.mouseY)
+
 
          
 
-
+  
     }
 }

@@ -5,7 +5,7 @@ export class IObject {
       }
       this.p = p;
       this.position = p.createVector(0, 0);
-      this.rotation = 0;
+      this.rotation3D = 0;
       this.scale = p.createVector(1, 1);
     }
     // Abstract methods
@@ -37,7 +37,7 @@ export class IObject {
     // Example of a utility method using p5 functions
     applyTransformations() {
       this.p.translate(this.position.x, this.position.y);
-      this.p.rotate(this.rotation);
+      this.p.rotate(this.rotation3D);
       this.p.scale(this.scale.x, this.scale.y);
     }
   }
