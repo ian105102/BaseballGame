@@ -29,6 +29,8 @@ export class IScene{
     }
 
     add(object) {
+
+
         if (!object || typeof object.draw !== 'function' || typeof object.update !== 'function') {
           throw new Error('Object must implement draw() and update() methods.');
         }

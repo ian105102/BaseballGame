@@ -9,6 +9,8 @@ export class IObject {
       this.scale = p.createVector(1, 1);
     }
     // Abstract methods
+
+
     _on_draw(){
         throw new Error('Abstract method _on_draw() must be implemented in derived class');
 
