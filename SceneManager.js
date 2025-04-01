@@ -33,7 +33,9 @@ export class SceneManager {
       if (!this.scenes.has(sceneEnum)) {
         throw new Error(`Scene ${sceneEnum} does not exist.`);
       }
+      this.currentScene.OnStop();
       this.currentScene = this.scenes.get(sceneEnum);
+      
       console.log(`Changed to ${sceneEnum}`);
     }
   

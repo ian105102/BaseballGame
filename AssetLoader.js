@@ -1,4 +1,5 @@
 /*
+本來是以為scene init 時序卡到update 後沒發現沒有這個問題就沒用
     * AssetLoader.js
     * 資源加載器
     * 這個類別會加載圖片、音頻和JSON文件

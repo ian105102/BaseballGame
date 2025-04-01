@@ -42,8 +42,8 @@ export class Hitbox3Ditem extends IObject {
         });
         Matter.Body.setCentre(this.body, { x: this.position.x - rotateCenter.x, y: this.position.y - rotateCenter.y });
         Matter.Body.setPosition(this.body, { x: this.position.x, y: this.position.y });
+        
         this.collisionHandler = this.onCollisionStart.bind(this);
-
         Matter.Events.on(engine, 'collisionStart', this.collisionHandler);
         Matter.World.add(world, this.body);
     }
@@ -133,9 +133,9 @@ export class Hitbox3Ditem extends IObject {
 
     _on_draw() {
        
-        this.view3d.display(this.position, this.rotation3D, this.rotateCenter, this.color, { x: 0, y: 0, z: 0 });
+        this.view3d.display({x:0,y:0}, this.rotation3D, this.rotateCenter, this.color, { x: 0, y: 0, z: 0 });
         this.drawHitbox();
-    }
+    }1
 
     _on_update(delta) {}
 

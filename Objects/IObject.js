@@ -7,6 +7,7 @@ export class IObject {
       this.position = p.createVector(0, 0);
       this.rotation3D = 0;
       this.scale = p.createVector(1, 1);
+      this.isActive = true; // Default value for isActive , you can change it in derived classes
     }
     // Abstract methods
 
@@ -21,6 +22,7 @@ export class IObject {
     }
     
     draw() {
+        if (!this.isActive) return;
         this.p.push()
         this.applyTransformations()
         this._on_draw()
@@ -28,7 +30,7 @@ export class IObject {
     }
   
     update(delta) {
-      
+      if(!this.isActive) return;
       this._on_update(delta)
     }
 

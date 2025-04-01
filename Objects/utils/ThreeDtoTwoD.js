@@ -37,7 +37,7 @@ export class ThreeDtoTwoD{
         this.pg.pop();
         // 顯示 3D 畫布上的圖像
         
-        this.p.image(this.pg,  - this.size.x/2, - this.size.y,this.size.x ,this.size.y); 
+        this.p.image(this.pg,  position.x- this.size.x/2,position.y - this.size.y/2,this.size.x ,this.size.y); 
 
     }
 }

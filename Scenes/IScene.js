@@ -48,4 +48,8 @@ export class IScene{
 
 
     }
+    // 新增暫停方法，於場景切換時觸發
+    OnStop(){ 
+
+    }
 }

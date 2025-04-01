@@ -4,7 +4,7 @@
 import { SceneManager } from "./SceneManager.js"
 import { WIDTH } from "./G.js"
 import { HEIGHT } from "./G.js"
-
+import poseTracker from './detection.js';
 
 import{AssetLoader }from './AssetLoader.js';
 

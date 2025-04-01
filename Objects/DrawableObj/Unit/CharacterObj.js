@@ -1,11 +1,12 @@
-import { IObject } from "../../IObject";
+import { IObject } from "../../IObject.js";
+import { Hands } from "./BodyComponents/HandsObj.js";
 
 export class Character extends IObject{
-    constructor(p, centerx, centery){
+    constructor(p, position){
         super(p);
         this.p = p;
-
-        this.hands = new hands(centerx, centery);
+        this.position = p.createVector(position.x, position.y);
+        this.hands = new Hands(p);
         
     }
 
@@ -23,8 +24,9 @@ export class Character extends IObject{
 
 
     _on_draw(){
-        this.hands.display();
         this.drawBody();
+        this.hands.display();
+      
     
     }
     _on_update(delta){

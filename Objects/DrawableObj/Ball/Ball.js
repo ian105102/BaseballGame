@@ -41,8 +41,6 @@ export class Ball extends IObject{
         let endY = p.height / 2 + this.randomY_offset_end;
 
         // 控制點
-        
-
         let controlX1 = startX+ this.randomX_offset_throw;
         let controlY1 = 0 + this.randomY_offset_throw;
         let controlX2 = endX;
