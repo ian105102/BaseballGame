@@ -12,6 +12,7 @@ export class CurveMoveEffect {
     }
     // 設置 Catmull-Rom 曲線的控制點 , points用於設置曲線的控制點, callback用於設置運算所需 , onComplete用於設置完成後的回調函數
     do(points, callback = null , OnComplete = null , velocity = 0.005 , acc = 0.005) {
+
         this.points = points;
         this.callback = callback; // 儲存回調函數
         this.t = 0;  // 重置動畫進度
@@ -44,7 +45,7 @@ export class CurveMoveEffect {
             this.t += this.velocity;
         } else {
             if (this.loop) {
-                console.log("loop");
+         
                 this.t = 0; // 重置 t 以循環
                 this.velocity = 0;
             } else {
@@ -52,10 +53,14 @@ export class CurveMoveEffect {
                 this.velocity = 0;
                 this.isActive = false;
             }
+     
             if(this.OnComplete){
-                console.log("onComplete");
-                this.OnComplete();
+            
+               
+                let temp =  this.OnComplete;
                 this.OnComplete = null;
+                temp(); 
+                temp = null;
             }
            
         }

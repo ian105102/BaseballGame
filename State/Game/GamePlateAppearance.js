@@ -12,7 +12,7 @@ export class GamePlateAppearance extends GameFlowBase {
         this.circleCollishion = new  CircleCollision(this.system.p);
         this.circleCollishion.position.x = 520;
         this.circleCollishion.position.y = 600;
-        this.circleCollishion.radius = 30;
+        this.circleCollishion.radius = 10;
         this.ThrowBaseball();
 
         
@@ -24,6 +24,7 @@ export class GamePlateAppearance extends GameFlowBase {
   
         console.log("開始投球");
         this.system.baseball.isActive = true;
+
         this.system.ballCurveEffect.do(
             [
                 { x: 540, y: 200 },
@@ -34,12 +35,14 @@ export class GamePlateAppearance extends GameFlowBase {
             (x,y,t) =>{
 
                 this.circleCollishion.draw();
-                if(this.circleCollishion.checkCollision(this.system.baseball.position.x, this.system.baseball.position.y ,x,y)){
+                if(this.circleCollishion.checkCollisionWithLine(this.system.baseball.position.x, this.system.baseball.position.y ,x,y)){
                     if(this.system.bat.checkCollide([this.system.baseball.body])){
+                        
                         this.system.ballCurveEffect.isActive = false;
                         this.onHitBaseball = false;
                      
                         this.HitBaseball({x , y} , t ,  this.system.ballCurveEffect.velocity );
+
                     }   
                 }
                 this.system.baseball.position.x = x;
@@ -49,19 +52,15 @@ export class GamePlateAppearance extends GameFlowBase {
                 
             },
             ()=>{
-               
-                this.UnHitBaseball();
+
+                this._onSkipTheBall();
             }
             ,
             0.005,
-            0.005
+            0.001
         ); 
     }
-    UnHitBaseball(){
 
-        console.log("沒打到!!!");
-        this.system.changeState(new GamePlateAppearance(this.system));
-    }
     HitBaseball(hitPoint , size ,startVelocity ){
         this.system.ballCurveEffect.do(
             [
@@ -81,18 +80,23 @@ export class GamePlateAppearance extends GameFlowBase {
             
             },
             ()=>{
-                this.UnHitBaseball();
+             
+                this._onHitTheBall();
             }
             ,
             startVelocity,
             0.001
         ); 
     }
+    _onHitTheBall(){
+        this.next();
+    }
+    _onSkipTheBall(){
+        this.next();
+    }
 
-    
-    update(delta){
-
-
+    next(){
+        this.system.changeState(new GamePlateAppearance(this.system));
     }
 
 }
