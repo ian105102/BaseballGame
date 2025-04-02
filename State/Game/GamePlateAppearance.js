@@ -6,21 +6,22 @@ import { CircleCollision } from "../../Objects/Collisions/CircleCollision.js";
 export class GamePlateAppearance extends GameFlowBase {
     constructor(System){
         super(System);
-        this.onHitBaseball =  false;
+    
     }
     start(){
         this.circleCollishion = new  CircleCollision(this.system.p);
         this.circleCollishion.position.x = 520;
         this.circleCollishion.position.y = 600;
-        this.circleCollishion.radius = 10;
-        this.system.GeneratorManager.start(this.ThrowBaseball());
+        this.circleCollishion.radius = 30;
+        this.ThrowBaseball();
+
         
 
         
   
     }
-    *ThrowBaseball(){
-        this.onHitBaseball = true;
+    ThrowBaseball(){
+  
         console.log("開始投球");
         this.system.baseball.isActive = true;
         this.system.ballCurveEffect.do(
@@ -31,31 +32,41 @@ export class GamePlateAppearance extends GameFlowBase {
                 { x: 550, y: 700 }
             ],
             (x,y,t) =>{
-    
+
+                this.circleCollishion.draw();
+                if(this.circleCollishion.checkCollision(this.system.baseball.position.x, this.system.baseball.position.y ,x,y)){
+                    if(this.system.bat.checkCollide([this.system.baseball.body])){
+                        this.system.ballCurveEffect.isActive = false;
+                        this.onHitBaseball = false;
+                     
+                        this.HitBaseball({x , y} , t ,  this.system.ballCurveEffect.velocity );
+                    }   
+                }
                 this.system.baseball.position.x = x;
                 this.system.baseball.position.y = y;
                 this.system.baseball.scale.x =  t;
                 this.system.baseball.scale.y =  t;
-            
+                
             },
             ()=>{
-                
+               
                 this.UnHitBaseball();
             }
             ,
             0.005,
-            0.001
+            0.005
         ); 
     }
     UnHitBaseball(){
-        this.onHitBaseball = false;
+
         console.log("沒打到!!!");
+        this.system.changeState(new GamePlateAppearance(this.system));
     }
-    HitBaseball(startPoint , startT , startVelocity){
+    HitBaseball(hitPoint , size ,startVelocity ){
         this.system.ballCurveEffect.do(
             [
         
-                this.hitPoint,
+                hitPoint,
                 { x: 500, y: 300 },
                 { x: 540, y: 200 },
 
@@ -64,13 +75,12 @@ export class GamePlateAppearance extends GameFlowBase {
     
                 this.system.baseball.position.x = x;
                 this.system.baseball.position.y = y;
-                let remap = this.system.p.map(t, 0, 1, 1, 0);
+                let remap = this.system.p.map(t, 0, 1, size, 0);
                 this.system.baseball.scale.x = remap;
                 this.system.baseball.scale.y =  remap;
             
             },
             ()=>{
-                
                 this.UnHitBaseball();
             }
             ,
@@ -81,19 +91,7 @@ export class GamePlateAppearance extends GameFlowBase {
 
     
     update(delta){
-        if(this.onHitBaseball){
-            let x1 = this.system.baseball.position.x;
-            let y1 = this.system.baseball.position.y;
-            this.circleCollishion.draw();
-            if(this.circleCollishion.checkCollision(x1, y1)){
-                if(this.system.bat.checkCollide([this.system.baseball.body])){
-                    this.system.ballCurveEffect.isActive = false;
-                    this.onHitBaseball = false;
-              
-                    this.HitBaseball({x1 , y1} ,  );
-                }   
-            }
-        }
+
 
     }
 

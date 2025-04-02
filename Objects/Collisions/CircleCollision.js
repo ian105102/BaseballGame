@@ -11,6 +11,14 @@ export class CircleCollision extends ICollision {
   checkCollision(x, y) {//實測下來應該是不需要減去半徑
     return this.p.collidePointCircle(x, y, this.position.x , this.position.y , this.radius * 2);
   }
+  checkCollisionWithCircle(x1, y1, x2, y2) {
+    return this.p.collideLineCircle(
+      x1, y1, 
+      x2, y2,   
+      this.position.position.x,  this.position.position.y, 
+      this.radius * 2 
+    );
+  }
 
   checkCollisionWithMouse() {
     return this.p.collidePointCircle(this.p.mouseX, this.p.mouseY,  this.position.x - this.radius, this.position.y - this.radius, this.radius * 2);
