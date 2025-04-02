@@ -34,8 +34,6 @@ export class Hitbox3Ditem extends IObject {
         this.rotation3D = this.p.createVector(0, 0, 0);
         this.color = color;
         this.rotateCenter = this.p.createVector(rotateCenter.x, rotateCenter.y);
-        
-        console.log("Hitbox3Ditem", hitboxSize.x, hitboxSize.y);
         this.body = Matter.Bodies.rectangle(this.position.x, this.position.y, hitboxSize.x, hitboxSize.y, {
             isStatic: false,
             isSensor: true,

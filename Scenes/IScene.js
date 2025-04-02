@@ -52,4 +52,8 @@ export class IScene{
     OnStop(){ 
 
     }
+    // 新增每個場景開始時的初始化方法
+    OnStart(){
+
+    }
 }

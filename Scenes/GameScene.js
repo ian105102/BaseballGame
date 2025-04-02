@@ -15,7 +15,9 @@ import { Character } from "../Objects/DrawableObj/Unit/CharacterObj.js"
 import poseTracker from '../detection.js';
 import { CurveMoveEffect } from "../Objects/Utils/CurveMoveEffect.js"
 import { Baseball } from "../Objects/DrawableObj/Ball/Baseball.js"
-
+import { GameCountdown } from "../State/Game/GameCountdown.js"
+import { GameNone } from "../State/Game/GameNone.js"
+import { GeneratorManager } from "../Objects/Utils/GeneratorManager.js"
 export class GameScene extends IScene{
     static instance = null
 
@@ -26,21 +28,26 @@ export class GameScene extends IScene{
         }
         super(p);
 
-      
-        let assetLoader = new AssetLoader(p);
+
         this.video;
 
         this.World = Matter.World.create({ gravity: { x: 0, y: 0 } });
         this.engine = Matter.Engine.create({ gravity: { x: 0, y: 0 } });
         this.batModel = p.loadModel('./Asset/3dObject/BaseballBat.obj',true);
-        console.log(this.batModel);
         
-        this.ballCurveEffect = new CurveMoveEffect(p, 0.01, true, true);
+        
+        this.ballCurveEffect = new CurveMoveEffect(p, 0.01, true, false);
+        this.ballCurveEffect.isActive = false;
+
+        this.GeneratorManager = new GeneratorManager();
+        
+
+
 
         GameScene.instance = this;
         GameScene.instance.init()
-
     
+        
         
     } 
     
@@ -48,15 +55,23 @@ export class GameScene extends IScene{
     video;
     //call after constructor
     init(){
-        this.needVideo = true;
+
+
+        let instance = GameScene.instance
+
+
         let func =()=>{
             SceneManager.instance.changeScene(SceneEnum.SCORE)
         }
         let go_score_button = new RectButton(this.p,300,100,func)
         go_score_button.position.x = 800
         go_score_button.position.y = 600
+        instance.add(go_score_button)
 
-        let instance = GameScene.instance
+
+
+
+        this.needVideo = true;
         this.video = this.p.createCapture(this.p.VIDEO)
         .size(WIDTH, HEIGHT)
         .hide();
@@ -72,22 +87,24 @@ export class GameScene extends IScene{
         }).start();
         
 
-        instance.add(go_score_button)
         
         let text = new DrawableText(this.p,"遊戲介面",50)
         text.position.x = WIDTH / 2
         text.position.y = HEIGHT / 8
         instance.add(text)
+        this.countdownText = new DrawableText(this.p,"0",50);
+        this.countdownText.position.x = WIDTH / 2
+        this.countdownText.position.y = HEIGHT / 2;
+        instance.add(this.countdownText);
+
+
+
 
         // this.bat = new Bat(this.p)
-        this.ball = new Ball(this.p)
+        // this.ball = new Ball(this.p)
+    
+        // instance.add(this.ball)
 
-      
-        instance.add(this.ball)
-
-
-        console.log(this.batModel)
-        
         this.bat = new Hitbox3Ditem( this.p , this.batModel, this.World, this.engine, {x:WIDTH/2,y:HEIGHT/2});
         instance.add(this.bat);
 
@@ -95,26 +112,23 @@ export class GameScene extends IScene{
         instance.add(this.Player);
         
         this.baseball = new Baseball(this.p, this.World , {x: 30, y: 30});
+        this.baseball.isActive = false;
         instance.add(this.baseball);
-
-
-        this.ballCurveEffect.do(
-            [
-                { x: 540, y: 500 },
-                { x: 500, y: 0 },
-                { x: 520, y: 500 },
-            ],
-            (x,y,t) =>{
-                console.log(x,y,t);
-                this.baseball.position.x = x;
-                this.baseball.position.y = y;
-         
-            }
-         );
         
-    }
 
+
+         
+
+    }
+    OnStart(){
+     
+        this.changeState(new GameCountdown(GameScene.instance) );
+
+    }
     _on_update(delta){
+
+
+
         // let hit = this.bat.collider.checkCollisionWithCircle(this.ball.collider)
         // console.log(hit)
         // if(hit && this.p.is_first_left_pressing){
@@ -122,6 +136,9 @@ export class GameScene extends IScene{
         //     this.ball.stop_shoot()
 
         // }
+        this.GeneratorManager.update();
+
+
         Matter.Engine.update(this.engine);
         
         this.bat.rotateEuler(0, this.p.mouseY/100 , this.p.mouseX/100);
@@ -144,12 +161,20 @@ export class GameScene extends IScene{
         if(this.bat.checkCollide([this.baseball.body])){
             console.log("bat hit ball!")
             this.baseball.isActive = false;
-        }
+        }   
 
-
+        this.GameFlow.update(delta);
     }
     OnStop(){
         this.needVideo = false;
+        this.GeneratorManager.clearAll();
+        this.changeState(new GameNone(GameScene.instance));
+  
+    }
+    changeState(state){
+        this.GameFlow
+        this.GameFlow = state;
+        this.GameFlow.start();
     }
 
 }
