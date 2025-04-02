@@ -8,6 +8,7 @@ export class GameCountdown extends GameFlowBase {
         this.timer = new WaitTimer();
     }
     start(){
+        this.system.countdownText.isActive = true;
         this.system.GeneratorManager.start(this.countdown());
  
     }

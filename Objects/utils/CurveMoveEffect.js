@@ -4,7 +4,7 @@ export class CurveMoveEffect {
         this.p = p;
         this.t = 0; // 時間參數（0~1）
         this.speed = speed; // 控制速度
-        this.active = false; // 控制是否執行 update
+        this.isActive = false; // 控制是否執行 update
         this.debug = debug; // 是否啟用 debug 模式
         this.callback = null;
         this.loop = loop // 是否循環
@@ -15,7 +15,7 @@ export class CurveMoveEffect {
         this.points = points;
         this.callback = callback; // 儲存回調函數
         this.t = 0;  // 重置動畫進度
-        this.active = true; 
+        this.isActive = true; 
         this.OnComplete = OnComplete;
         this.acc = acc;
         this.velocity = velocity;
@@ -23,7 +23,7 @@ export class CurveMoveEffect {
 
     update(delta) {
    
-        if (!this.active) return;
+        if (!this.isActive) return;
         if ( this.points == null  || this.points.length < 2) {
             return;
         }
@@ -50,7 +50,7 @@ export class CurveMoveEffect {
             } else {
                 this.t = 1; // 停止在最後一點
                 this.velocity = 0;
-                this.active = false;
+                this.isActive = false;
             }
             if(this.OnComplete){
                 console.log("onComplete");

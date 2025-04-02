@@ -8,8 +8,8 @@ export class CircleCollision extends ICollision {
     this.radius = radius;
   }
 
-  checkCollision(x, y) {
-    return this.p.collidePointCircle(x, y, this.position.x - this.radius, this.position.y - this.radius, this.radius * 2);
+  checkCollision(x, y) {//實測下來應該是不需要減去半徑
+    return this.p.collidePointCircle(x, y, this.position.x , this.position.y , this.radius * 2);
   }
 
   checkCollisionWithMouse() {
@@ -32,6 +32,7 @@ export class CircleCollision extends ICollision {
 
   _on_draw(){
     this.p.fill(200, 0, 200,100);
+
     this.p.ellipse(0, 0, this.radius, this.radius);
   }
 }

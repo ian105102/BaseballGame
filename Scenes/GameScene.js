@@ -104,16 +104,16 @@ export class GameScene extends IScene{
         // this.ball = new Ball(this.p)
     
         // instance.add(this.ball)
-
+        this.baseball = new Baseball(this.p, this.World , {x: 30, y: 30});
+        this.baseball.isActive = false;
+        instance.add(this.baseball);
         this.bat = new Hitbox3Ditem( this.p , this.batModel, this.World, this.engine, {x:WIDTH/2,y:HEIGHT/2});
         instance.add(this.bat);
 
         this.Player = new Character(this.p, this.bat, this.ball);
         instance.add(this.Player);
         
-        this.baseball = new Baseball(this.p, this.World , {x: 30, y: 30});
-        this.baseball.isActive = false;
-        instance.add(this.baseball);
+
         
 
 
@@ -123,7 +123,7 @@ export class GameScene extends IScene{
     OnStart(){
      
         this.changeState(new GameCountdown(GameScene.instance) );
-
+        this.needVideo = true;
     }
     _on_update(delta){
 
@@ -158,10 +158,7 @@ export class GameScene extends IScene{
         this.ballCurveEffect.update(delta);
 
 
-        if(this.bat.checkCollide([this.baseball.body])){
-            console.log("bat hit ball!")
-            this.baseball.isActive = false;
-        }   
+
 
         this.GameFlow.update(delta);
     }
@@ -169,6 +166,7 @@ export class GameScene extends IScene{
         this.needVideo = false;
         this.GeneratorManager.clearAll();
         this.changeState(new GameNone(GameScene.instance));
+
   
     }
     changeState(state){
