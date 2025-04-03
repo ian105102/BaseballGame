@@ -36,7 +36,7 @@ export class GameScene extends IScene{
         this.batModel = p.loadModel('./Asset/3dObject/BaseballBat.obj',true);
         
         
-        this.ballCurveEffect = new CurveMoveEffect(p, 0.01, true, false);
+        this.ballCurveEffect = new CurveMoveEffect(p, 0.01, false, false , true);
         this.ballCurveEffect.isActive = false;
 
         this.GeneratorManager = new GeneratorManager();
@@ -143,7 +143,7 @@ export class GameScene extends IScene{
         
         this.bat.rotateEuler(0, this.p.mouseY/100 , this.p.mouseX/100);
        
-        this.Player.setPosition(WIDTH/2-130, HEIGHT/2 +200);
+        this.Player.setPosition(WIDTH/2-170, HEIGHT/2 +210);
       
         this.bat.setPosition(this.Player.hands.getrelLeft().x, this.Player.hands.getrelLeft().y);
        

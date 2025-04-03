@@ -1,6 +1,6 @@
 
 export class CurveMoveEffect {
-    constructor( p, speed = 0.005, debug = false , loop = false ) {
+    constructor( p, speed = 0.005, debug = false , loop = false  , relationLength = true) {
         this.p = p;
         this.t = 0; // 時間參數（0~1）
         this.speed = speed; // 控制速度
@@ -9,6 +9,8 @@ export class CurveMoveEffect {
         this.callback = null;
         this.loop = loop // 是否循環
         this.points = null; // 控制點
+        this.linelength = 0; // 曲線長度
+        this.relationLength = true;
     }
     // 設置 Catmull-Rom 曲線的控制點 , points用於設置曲線的控制點, callback用於設置運算所需 , onComplete用於設置完成後的回調函數
     do(points, callback = null , OnComplete = null , velocity = 0.005 , acc = 0.005) {
@@ -19,16 +21,39 @@ export class CurveMoveEffect {
         this.isActive = true; 
         this.OnComplete = OnComplete;
         this.acc = acc;
-        this.velocity = velocity;
+        if(this.relationLength){
+            this.velocity = velocity / (this.linelength / 1000); // 根據曲線長度調整速度
+        }else{
+            this.velocity = velocity;
+        }
+        
+        this.linelength = this.calculatePathLength(); // 計算曲線長度
     }
-
+    getSpeed(){
+        return this.velocity * this.linelength / 1000;
+    }
+    calculatePathLength() {
+        let totalDistance = 0;
+    
+        for (let i = 1; i < this.points.length; i++) {
+            let p1 = this.points[i - 1];
+            let p2 = this.points[i];
+    
+            let dx = p2.x - p1.x;
+            let dy = p2.y - p1.y;
+    
+            totalDistance += Math.sqrt(dx * dx + dy * dy);
+        }
+    
+        return totalDistance;
+    }
     update(delta) {
    
         if (!this.isActive) return;
         if ( this.points == null  || this.points.length < 2) {
             return;
         }
-      
+        
         let position = this.calculateCatmullRomPosition(this.points, this.t);
 
         if (this.debug) {
@@ -38,11 +63,18 @@ export class CurveMoveEffect {
         if (this.callback) {
             this.callback(position.x, position.y , this.t);
         }
-        // 更新 t 值
-        
+
+        this.velocity += this.acc * delta;
+        if(this.relationLength){
+                 this.t += this.velocity /( this.linelength /1000)* delta*60; 
+        }else{
+            this.t += this.velocity * delta*60;
+        }
+
+
         if (this.t < 1) {
-            this.velocity += this.acc * delta;
-            this.t += this.velocity;
+       
+          
         } else {
             if (this.loop) {
          
@@ -68,6 +100,10 @@ export class CurveMoveEffect {
 
     // 計算 Catmull-Rom 樣條插值
     calculateCatmullRomPosition(points, t) {
+        if(t < 0 || t > 1){
+            console.error("t 值超出範圍 (0~1)");
+            return { x: 0, y: 0 };
+        }
         let p0, p1, p2, p3;
         let n = points.length - 1;
 
@@ -79,7 +115,7 @@ export class CurveMoveEffect {
 
         p0 = segment > 0 ? points[segment - 1] : p1;
         p3 = segment < n - 1 ? points[segment + 2] : p2;
-
+        
         return this.catmullRom(p0, p1, p2, p3, localT);
     }
 
