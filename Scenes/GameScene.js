@@ -29,6 +29,9 @@ import { HitPointUi } from "../Objects/DrawableObj/ui/HitPointUi.js"
 
 export class GameScene extends IScene{
     static instance = null
+    static receiveArduino = null;
+    static euler = [0.0, 0.0, 0.0];
+    static acceleration = [0, 0, 0];
 
     constructor(p) {
         if (GameScene.instance) {
@@ -51,8 +54,6 @@ export class GameScene extends IScene{
 
         GameScene.instance = this;
         GameScene.instance.init()
-    
-        
         
     } 
     setImages(assets) {
@@ -107,6 +108,7 @@ export class GameScene extends IScene{
             width: 1080,
             height: 720
         }).start();
+
         
         this.strikeZoneUi = new StrikeZoneUi(this.p );
         this.strikeZoneUi.position.x = WIDTH / 2+5;
@@ -257,6 +259,7 @@ export class GameScene extends IScene{
         this.scoreboard.setCounts(0, 0,0 ,0);
 
     }
+
     _on_update(delta){
 
       

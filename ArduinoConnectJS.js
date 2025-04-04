@@ -1,83 +1,87 @@
 
-/*
-let receiveArduino; // 宣告
-receiveArduino = new ReceiveArduino("COM3");  // 需要知道port
 
-// 宣告數值陣列
-let quat = [];
-let euler = [];
-let acceleration = [];
-
-// 取得資料
-receiveArduino.onGotData = () => {
-    quat = receiveArduino.dataDist['quat'];
-    euler = receiveArduino.dataDist['euler'];
-    acceleration = receiveArduino.dataDist['acceleration'];
-    // console.log(quat);
-    // console.log(euler);
-    // console.log(acceleration);
-  };
-*/
-
-class ReceiveArduino{
-  constructor(port){
-    this.serialPortName = port;
-    this.serial = new p5.SerialPort();
-    this.serial.open(port);
-    this.serial.on('data', this.gotData.bind(this));
-    this.serial.on('open', () => {
-      console.log("Serial Port is Open!");
-    });
-    this.receiveMessage="";
-    // 新增 dataDist 屬性來儲存數據
-    this.dataDist = {
-      quat: [0, 0, 0, 0],
-      euler: [0, 0, 0],
-      acceleration: [0, 0, 0]
-    };
-    console.log(this.serial);
+export class ReceiveArduino{
+  constructor(p){
+    // this.p = p;
+    // 建立 Serial 連接按鈕
+    // let button = this.p.createButton("連接 Arduino");
+    // button.mousePressed(() => this.connectPort());
+    // this.connectPort();
+    this.port;
+    this.reader;
+    this.latestData = "尚未收到資料";
+    
+    this.euler = [0.0, 0.0, 0.0];
+    this.acceleration = [0, 0, 0];
   }
-
-  onGotData(){
-
-  }
-
-  // 輸出資料
-  // sendToArduino(msg){
-  //   serial.write(msg);
-  // }
   
-  // 獲取資料
-  gotData() {    
-    let currentString = this.serial.readLine();
-    if (currentString != "") {
-      this.receiveMessage = currentString;
-      this.dataSaveToDist();
-      this.onGotData();
+  async connectPort() {
+    try {
+      this.port = await navigator.serial.requestPort();
+      await this.port.open({ baudRate: 9600 });
+
+      const textDecoder = new TextDecoderStream();
+      const readableStreamClosed = this.port.readable.pipeTo(textDecoder.writable);
+      const inputStream = textDecoder.readable;
+
+      this.reader = inputStream.getReader();
+
+      this.readLoop(); // 開始讀資料
+    } catch (err) {
+      console.error("連接錯誤:", err);
     }
   }
 
-  dataSaveToDist(){
+  async readLoop() {
+    let buffer = "";
+  
+    try {
+      while (true) {
+        const { value, done } = await this.reader.read();
+        if (done) break;
+  
+        buffer += value;
+  
+        let newlineIndex;
+        while ((newlineIndex = buffer.indexOf("\n")) >= 0) {
+          let line = buffer.slice(0, newlineIndex).trim(); // 拿到一整行
+          buffer = buffer.slice(newlineIndex + 1);         // 剩下的存回 buffer
+  
+          // 完整一行資料
+          this.latestData = line;
+          console.log("最新資料:", this.latestData);
+          if(this.latestData.length != 0){
+            this.dataSaveToDist(this.latestData);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("讀取錯誤:", error);
+    } finally {
+      this.reader.releaseLock();
+    }
+  }
+
+  gotData(){
+
+  }
+
+  arduinoUpdate(){
+    this.connectPort()
+  }
+
+  dataSaveToDist(latestData){
     // 使用正則表達式解析數據
-    if (this.receiveMessage.startsWith('quat:')) {
-      let quatValues = this.receiveMessage.split(':')[1].split(',');
-      this.dataDist.quat = [parseFloat(quatValues[0]), 
-                            parseFloat(quatValues[1]),
-                            parseFloat(quatValues[2]),
-                            parseFloat(quatValues[3])];
-    } else if (this.receiveMessage.startsWith('euler:')) {
-      let eulerValues = this.receiveMessage.split(':')[1].split(',');
-      this.dataDist.euler = [parseFloat(eulerValues[0]), 
-                            parseFloat(eulerValues[1]),
-                            parseFloat(eulerValues[2])];
-    } else if (this.receiveMessage.startsWith('acceleration:')) {
-      let accelValues = this.receiveMessage.split(':')[1].split(',');
-      this.dataDist.acceleration = [parseInt(accelValues[0]), 
-                                    parseInt(accelValues[1]),
-                                    parseInt(accelValues[2])];
+    if (latestData.startsWith('euler:')) {
+      let eulerValues = latestData.split(':')[1].split(',');
+      this.euler = [parseFloat(eulerValues[0]), 
+                    parseFloat(eulerValues[1]),
+                    parseFloat(eulerValues[2])];
+    } else if (latestData.startsWith('acceleration:')) {
+      let accelValues = latestData.split(':')[1].split(',');
+      this.acceleration = [parseInt(accelValues[0]), 
+                          parseInt(accelValues[1]),
+                          parseInt(accelValues[2])];
     }
   }
-  
 }
-
-
