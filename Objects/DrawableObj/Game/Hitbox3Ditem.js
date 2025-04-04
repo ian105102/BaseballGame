@@ -13,7 +13,7 @@
     這個類別會使用 Matter.js 的 World.add() 函數來將碰撞檢測添加到世界中
     這個類別會使用 Matter.js 的 Collision.collides() 函數來檢查碰撞
 */
-import { ThreeDtoTwoD } from "../../Utils/ThreeDtoTwoD.js";
+import { ThreeDtoTwoD } from "../../utils/ThreeDtoTwoD.js";
 import { IObject } from "../../IObject.js"
 export class Hitbox3Ditem extends IObject {
     #currentScale = this.p.createVector(1, 1);

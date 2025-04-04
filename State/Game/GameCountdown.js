@@ -1,5 +1,5 @@
 import { GameFlowBase } from "./GameFlowBase.js";
-import { GamePlateAppearance } from "./GamePlateAppearance.js";
+import { GameHitBall } from "./GameHitBall.js";
 import { WaitTimer } from "../../Objects/Utils/GeneratorManager.js";
 
 export class GameCountdown extends GameFlowBase {
@@ -22,7 +22,7 @@ export class GameCountdown extends GameFlowBase {
       
         this.system.countdownText.isActive = false;
         console.log("開始遊戲");
-        this.system.changeState(new GamePlateAppearance(this.system));
+        this.system.changeState(new GameHitBall(this.system));
       }
       
 

@@ -18,16 +18,18 @@ export class CurveMoveEffect {
         this.points = points;
         this.callback = callback; // 儲存回調函數
         this.t = 0;  // 重置動畫進度
-        this.isActive = true; 
+     
         this.OnComplete = OnComplete;
         this.acc = acc;
+        this.linelength = this.calculatePathLength(); // 計算曲線長度
         if(this.relationLength){
             this.velocity = velocity / (this.linelength / 1000); // 根據曲線長度調整速度
         }else{
             this.velocity = velocity;
         }
         
-        this.linelength = this.calculatePathLength(); // 計算曲線長度
+     
+        this.isActive = true; 
     }
     getSpeed(){
         return this.velocity * this.linelength / 1000;
@@ -66,15 +68,15 @@ export class CurveMoveEffect {
 
         this.velocity += this.acc * delta;
         if(this.relationLength){
-                 this.t += this.velocity /( this.linelength /1000)* delta*60; 
+                
+                this.t += this.velocity /( this.linelength /1000)* delta*60; 
         }else{
             this.t += this.velocity * delta*60;
         }
 
-
+    
         if (this.t < 1) {
-       
-          
+
         } else {
             if (this.loop) {
          

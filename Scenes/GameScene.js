@@ -18,6 +18,12 @@ import { Baseball } from "../Objects/DrawableObj/Ball/Baseball.js"
 import { GameCountdown } from "../State/Game/GameCountdown.js"
 import { GameNone } from "../State/Game/GameNone.js"
 import { GeneratorManager } from "../Objects/Utils/GeneratorManager.js"
+
+import { ObjEffect } from "../Objects/DrawableObj/effect/ObjEffect.js"
+import { Circle } from "../Objects/DrawableObj/effect/Circle.js"
+import { ScoreboardUi } from "../Objects/DrawableObj/ui/ScoreboardUi.js"
+
+
 export class GameScene extends IScene{
     static instance = null
 
@@ -35,14 +41,8 @@ export class GameScene extends IScene{
         this.engine = Matter.Engine.create({ gravity: { x: 0, y: 0 } });
         this.batModel = p.loadModel('./Asset/3dObject/BaseballBat.obj',true);
         
-        
-        this.ballCurveEffect = new CurveMoveEffect(p, 0.01, false, false , true);
-        this.ballCurveEffect.isActive = false;
-
         this.GeneratorManager = new GeneratorManager();
-        
-
-
+   
 
         GameScene.instance = this;
         GameScene.instance.init()
@@ -58,6 +58,9 @@ export class GameScene extends IScene{
 
 
         let instance = GameScene.instance
+
+        this.ballCurveEffect = new CurveMoveEffect(this.p, 0.01, false, false , true);
+        this.ballCurveEffect.isActive = false;
 
 
         let func =()=>{
@@ -92,51 +95,57 @@ export class GameScene extends IScene{
         text.position.x = WIDTH / 2
         text.position.y = HEIGHT / 8
         instance.add(text)
+
+
+
+
         this.countdownText = new DrawableText(this.p,"0",50);
         this.countdownText.position.x = WIDTH / 2
         this.countdownText.position.y = HEIGHT / 2;
         instance.add(this.countdownText);
 
 
-
-
-        // this.bat = new Bat(this.p)
-        // this.ball = new Ball(this.p)
-    
-        // instance.add(this.ball)
         this.baseball = new Baseball(this.p, this.World , {x: 30, y: 30});
+        this.baseball.position.set(WIDTH/2, HEIGHT/2);
         this.baseball.isActive = false;
         instance.add(this.baseball);
+
+
+
         this.bat = new Hitbox3Ditem( this.p , this.batModel, this.World, this.engine, {x:WIDTH/2,y:HEIGHT/2});
         instance.add(this.bat);
 
         this.Player = new Character(this.p, this.bat, this.ball);
         instance.add(this.Player);
         
-
+        this.scoreboard = new ScoreboardUi(this.p , "S", 50);
+        this.scoreboard.position.x = 0;
+        this.scoreboard.position.y = 0;
+        instance.add(this.scoreboard);
         
-
-
-         
+        this.circle = new Circle( this.p);
+        this.circle.radius = 200;
+        this.circle.position.x = WIDTH / 2;
+        this.circle.position.y = HEIGHT / 2;
+        this.circle.scale.set(0 , 0);
+   
+        instance.add(this.circle); // 轉場特效用球體，需要覆蓋所有物件
+        this.objEffect = new ObjEffect(this.p, this.circle);
 
     }
     OnStart(){
      
         this.changeState(new GameCountdown(GameScene.instance) );
         this.needVideo = true;
+        this.strikePoint = 0;
+        this.ballPoint = 0;
+        this.outPoint = 0;
+        this.point = 0;
+        this.round = 0;
+        this.scoreboard.setCounts(0, 0,0 ,0);
+
     }
     _on_update(delta){
-
-
-
-        // let hit = this.bat.collider.checkCollisionWithCircle(this.ball.collider)
-        // console.log(hit)
-        // if(hit && this.p.is_first_left_pressing){
-        //     console.log("bat hit ball!")
-        //     this.ball.stop_shoot()
-
-        // }
-        this.GeneratorManager.update();
 
 
         Matter.Engine.update(this.engine);
@@ -161,6 +170,7 @@ export class GameScene extends IScene{
 
 
         this.GameFlow.update(delta);
+        this.GeneratorManager.update();
     }
     OnStop(){
         this.needVideo = false;
@@ -168,6 +178,25 @@ export class GameScene extends IScene{
         this.changeState(new GameNone(GameScene.instance));
 
   
+    }
+    AtBatOver(ishit) {
+     
+        if(ishit){
+            
+            return true;
+        }
+        console.log(this.strikePoint , this.ballPoint);
+        if (this.strikePoint >= 3) {
+            this.outPoint++;
+            return true; 
+        }
+        
+        if (this.ballPoint >= 4) {
+            this.point++;
+            return true;  
+        }
+     
+        return false; // 這位打者還沒結束打擊
     }
     changeState(state){
         this.GameFlow
