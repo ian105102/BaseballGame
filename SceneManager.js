@@ -9,20 +9,29 @@ import { TutorialScene } from "./Scenes/TutoriaScene.js";
 
 export class SceneManager {
     static instance = null
-    constructor(p) {
+    constructor(p,assets) {
         if(SceneManager.instance){
             return SceneManager.instance
         }
 
        
-      
+      this.assets = assets;
       this.scenes = new Map();
-      this.scenes.set(SceneEnum.MENU, new MenuScene(p));
+      const menuScene = new MenuScene(p);
+      menuScene.setImages({
+        bgImg: assets.bgImg,
+        ballImg: assets.ballImg,
+        gloveImg: assets.gloveImg
+      });
+      this.scenes.set(SceneEnum.MENU, menuScene);
       this.scenes.set(SceneEnum.TUTORIAL, new TutorialScene(p));
-      this.scenes.set(SceneEnum.GAME, new GameScene(p));
+      const gameScene = new GameScene(p);
+      gameScene.setImages({
+        playball: assets.playball
+      });
+      this.scenes.set(SceneEnum.GAME, gameScene);
       this.scenes.set(SceneEnum.SCORE, new ScoreScene(p));
       //this.scenes.set(SceneEnum.MENU, new MenuScene());
-
       this.currentScene = this.scenes.get(SceneEnum.MENU);
       SceneManager.instance = this
 

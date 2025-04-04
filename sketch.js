@@ -7,10 +7,17 @@ import { HEIGHT } from "./G.js"
 import poseTracker from './detection.js';
 
 import{AssetLoader }from './AssetLoader.js';
-
 const main_sketch = (p)=>{
     /// <reference types="p5" />
     //const game_scene = new GameScene(p)
+    const assets = {};
+    p.preload = () => {
+        assets.bgImg = p.loadImage("static/baseballGround.png");
+        assets.playball = p.loadImage("static/ground3.png ");
+        assets.ballImg = p.loadImage("static/ball.png");
+        assets.gloveImg = p.loadImage("static/glove.png");
+      };
+
     let scene_manager; 
     p.setup = () =>{
 
@@ -32,7 +39,8 @@ const main_sketch = (p)=>{
         p.window_height = HEIGHT
      
         // 確認資源加載完成後在執行遊戲
-        scene_manager = new SceneManager(p)
+        // 把preload assets傳入Scene
+        scene_manager = new SceneManager(p,assets)
     }
     
     p.draw = () =>{
@@ -53,6 +61,9 @@ const main_sketch = (p)=>{
 
 
     p.mousePressed = () => {
+        if (SceneManager.instance.currentScene?.mousePressed) {
+            SceneManager.instance.currentScene.mousePressed();
+          }
         if (p.mouseButton === p.LEFT) {
             if(!p.is_left_pressing){
                 p.is_first_left_pressing = true
