@@ -5,6 +5,8 @@ import { ScoreScene } from "./Scenes/ScoreScene.js";
 import { TutorialScene } from "./Scenes/TutoriaScene.js";
 
 
+
+
 export class SceneManager {
     static instance = null
     constructor(p) {
@@ -12,8 +14,8 @@ export class SceneManager {
             return SceneManager.instance
         }
 
-
-
+       
+      
       this.scenes = new Map();
       this.scenes.set(SceneEnum.MENU, new MenuScene(p));
       this.scenes.set(SceneEnum.TUTORIAL, new TutorialScene(p));
@@ -27,10 +29,14 @@ export class SceneManager {
     }
   
     changeScene(sceneEnum) {
+
       if (!this.scenes.has(sceneEnum)) {
         throw new Error(`Scene ${sceneEnum} does not exist.`);
       }
+
+      this.currentScene.OnStop();
       this.currentScene = this.scenes.get(sceneEnum);
+      this.currentScene.OnStart();
       console.log(`Changed to ${sceneEnum}`);
     }
   

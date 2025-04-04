@@ -17,6 +17,7 @@ export class Bat extends IObject{
     }
 
     _on_draw(){
+       
         this.p.rectMode(this.p.CENTER)
         this.p.fill(0,0,255,70)
         this.p.rect(0,0,this.width,this.height)

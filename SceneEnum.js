@@ -3,4 +3,4 @@ export const SceneEnum = Object.freeze({
     TUTORIAL: 'TUTORIAL',
     GAME: 'GAME',
     SCORE: 'SCORE'
-});
+}); 

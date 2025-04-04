@@ -29,6 +29,8 @@ export class IScene{
     }
 
     add(object) {
+
+
         if (!object || typeof object.draw !== 'function' || typeof object.update !== 'function') {
           throw new Error('Object must implement draw() and update() methods.');
         }
@@ -44,6 +46,14 @@ export class IScene{
 
     _on_update(delta){
 
+
+    }
+    // 新增暫停方法，於場景切換時觸發
+    OnStop(){ 
+
+    }
+    // 新增每個場景開始時的初始化方法
+    OnStart(){
 
     }
 }

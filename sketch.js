@@ -4,12 +4,22 @@
 import { SceneManager } from "./SceneManager.js"
 import { WIDTH } from "./G.js"
 import { HEIGHT } from "./G.js"
+import poseTracker from './detection.js';
+
+import{AssetLoader }from './AssetLoader.js';
 
 const main_sketch = (p)=>{
     /// <reference types="p5" />
     //const game_scene = new GameScene(p)
-    const scene_manager = new SceneManager(p)
+    let scene_manager; 
     p.setup = () =>{
+        let assetLoader = new AssetLoader(p);
+        assetLoader.loadAssets([
+            { type: 'model', url: './Asset/3dObject/BaseballBat.obj' },
+  
+        ]);
+
+      
 
         p.is_left_pressing = false
         p.is_right_pressing = false
@@ -20,12 +30,16 @@ const main_sketch = (p)=>{
         p.createCanvas(WIDTH, HEIGHT);
 
 
-        
+      
         p.window_width = WIDTH
         p.window_height = HEIGHT
+     
+        // 確認資源加載完成後在執行遊戲
+        scene_manager = new SceneManager(p)
     }
     
     p.draw = () =>{
+       
         p.background(220);
         
 
@@ -83,3 +97,4 @@ const main_sketch = (p)=>{
 }
 
 new p5(main_sketch)
+
