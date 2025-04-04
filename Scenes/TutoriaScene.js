@@ -25,7 +25,7 @@ export class TutorialScene extends IScene{
     //call after constructor
     init(){
         let func =()=>{
-            SceneManager.instance.changeScene(SceneEnum.GAME)
+            SceneManager.instance.changeScene(SceneEnum.MENU)
         }
 
         let go_game_button = new RectButton(this.p,200,100,func)
