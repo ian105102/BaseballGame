@@ -26,6 +26,8 @@ import {  StrikeZoneUi } from "../Objects/DrawableObj/ui/StrikeZoneUi.js"
 import { BackImage } from "../Objects/DrawableObj/ui/BackImage.js"
 import { HitPointUi } from "../Objects/DrawableObj/ui/HitPointUi.js"
 
+import { ReceiveArduino } from "../ArduinoConnectJS.js"
+
 
 export class GameScene extends IScene{
     static instance = null
