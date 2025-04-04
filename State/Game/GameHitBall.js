@@ -88,6 +88,11 @@ export class GameHitBall extends GameFlowBase {
             0.0001
         );
     }
+    *ScreenShake(){
+        this.system.gameCanva.classList.add('shake');
+        yield* this.timer.delay(40);
+        this.system.gameCanva.classList.remove('shake');
+    }
     
     _updateBaseballPosition(x, y, t, baseball, bat, ballCurveEffect) {
         this.circleCollishion.draw();
@@ -107,7 +112,7 @@ export class GameHitBall extends GameFlowBase {
             ballCurveEffect.isActive = false;
             this.isHitBaseball = true;
             this.HitBaseball({ x, y }, baseball.scale.x, ballCurveEffect.getSpeed());
-         
+            this.system.GeneratorManager.start(this.ScreenShake());
         }
         
         if (checkSwing ) {  //之後要加上速度判斷
@@ -221,15 +226,7 @@ export class GameHitBall extends GameFlowBase {
         this.system.baseball.isActive = false;
         this.system.GeneratorManager.start(this.next());
     }
-    update(){
-      
-        this.rectangleCollishion.draw();
-        this.system.p.fill(0, 0, 0 , 0);
-        this.system.p.stroke(255, 0, 0);
-        this.system.p.strokeWeight(2);
-        this.system.p.rect(this.StrikeZonePoint.x -60/2,this.StrikeZonePoint.y - 100/2, 60, 100);
-        this.system.p.rect(this.StrikeZonePoint.x -120/2,this.StrikeZonePoint.y - 180/2, 120, 180);
-    }
+
     CalculateScore(){
         this.system.ResultShowtext.isActive = true;
         if(this.isBadBall && this.isHitBaseball){

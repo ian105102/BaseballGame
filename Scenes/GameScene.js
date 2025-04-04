@@ -22,6 +22,7 @@ import { GeneratorManager } from "../Objects/Utils/GeneratorManager.js"
 import { ObjEffect } from "../Objects/DrawableObj/effect/ObjEffect.js"
 import { Circle } from "../Objects/DrawableObj/effect/Circle.js"
 import { ScoreboardUi } from "../Objects/DrawableObj/ui/ScoreboardUi.js"
+import { StrikeZoneUiy } from "../Objects/DrawableObj/ui/StrikeZoneUi.js"
 
 
 export class GameScene extends IScene{
@@ -33,7 +34,8 @@ export class GameScene extends IScene{
             return GameScene.instance
         }
         super(p);
-
+        this.gameCanva = document.querySelector(".GameCanvas");
+    
 
         this.video;
 
@@ -63,13 +65,13 @@ export class GameScene extends IScene{
         this.ballCurveEffect.isActive = false;
 
 
-        let func =()=>{
-            SceneManager.instance.changeScene(SceneEnum.SCORE)
-        }
-        let go_score_button = new RectButton(this.p,300,100,func)
-        go_score_button.position.x = 800
-        go_score_button.position.y = 600
-        instance.add(go_score_button)
+        // let func =()=>{
+        //     SceneManager.instance.changeScene(SceneEnum.SCORE)
+        // }
+        // let go_score_button = new RectButton(this.p,300,100,func)
+        // go_score_button.position.x = 800
+        // go_score_button.position.y = 600
+        // instance.add(go_score_button)
 
 
 
@@ -89,14 +91,18 @@ export class GameScene extends IScene{
             height: 720
         }).start();
         
-
+        this.strikeZoneUiy = new StrikeZoneUiy(this.p );
+        this.strikeZoneUiy.position.x =550;
+        this.strikeZoneUiy.position.y =550;
+        this.strikeZoneUiy.size.set(60,100);
+        instance.add(this.strikeZoneUiy);
         
-        let text = new DrawableText(this.p,"遊戲介面",50)
-        text.position.x = WIDTH / 2
-        text.position.y = HEIGHT / 8
-        instance.add(text)
+        // let text = new DrawableText(this.p,"遊戲介面",50)
+        // text.position.x = WIDTH / 2
+        // text.position.y = HEIGHT / 8
+        // instance.add(text)
 
-        this.ResultShowtext = new DrawableText(this.p,"g45gg",50);
+        this.ResultShowtext = new DrawableText(this.p,"",50);
         this.ResultShowtext.position.x = WIDTH / 2;
         this.ResultShowtext.position.y = HEIGHT / 2;
         instance.add(this.ResultShowtext);
@@ -122,11 +128,12 @@ export class GameScene extends IScene{
         this.Player = new Character(this.p, this.bat, this.ball);
         instance.add(this.Player);
         
-        this.scoreboard = new ScoreboardUi(this.p , "S", 50);
+        this.scoreboard = new ScoreboardUi(this.p );
         this.scoreboard.position.x = 0;
         this.scoreboard.position.y = 0;
         instance.add(this.scoreboard);
-        
+
+
         this.circle = new Circle( this.p);
         this.circle.radius = 200;
         this.circle.position.x = WIDTH / 2;

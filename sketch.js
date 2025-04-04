@@ -13,11 +13,8 @@ const main_sketch = (p)=>{
     //const game_scene = new GameScene(p)
     let scene_manager; 
     p.setup = () =>{
-        let assetLoader = new AssetLoader(p);
-        assetLoader.loadAssets([
-            { type: 'model', url: './Asset/3dObject/BaseballBat.obj' },
-  
-        ]);
+
+
 
       
 
@@ -27,8 +24,8 @@ const main_sketch = (p)=>{
         p.is_first_left_pressing = false
         p.is_first_right_pressing = false
     
-        p.createCanvas(WIDTH, HEIGHT);
-
+        let canva =  p.createCanvas(WIDTH, HEIGHT);
+        canva.class("GameCanvas");
 
       
         p.window_width = WIDTH
