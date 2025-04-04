@@ -5,6 +5,9 @@ import { BaseballPlay } from "../../BaseballPlayEnum.js";
 import { WaitTimer } from "../../Objects/Utils/GeneratorManager.js";
 import { RectangleCollision } from "../../Objects/Collisions/RectangleCollision.js";
 import { GameChangeBatter } from "./GameChangeBatter.js";
+import { SceneManager } from "../../SceneManager.js";
+import { SceneEnum } from "../../SceneEnum.js";
+
 
 
 export class GameHitBall extends GameFlowBase {
@@ -102,12 +105,14 @@ export class GameHitBall extends GameFlowBase {
 
         if (collisionDetected && batHitDetected) {
             ballCurveEffect.isActive = false;
-            this.HitBaseball({ x, y }, baseball.scale.x, ballCurveEffect.getSpeed());
             this.isHitBaseball = true;
+            this.HitBaseball({ x, y }, baseball.scale.x, ballCurveEffect.getSpeed());
+         
         }
         
         if (checkSwing ) {  //之後要加上速度判斷
             this.isSwingbat = true;
+          
         }
         
         baseball.position.set(x, y);
@@ -177,7 +182,7 @@ export class GameHitBall extends GameFlowBase {
 
     HitBaseball(hitPoint , size ,startVelocity ){  
     
-        
+        this.CalculateScore();
         this.midPoint = {
             x: this.system.baseball.position.x,
             y: this.system.baseball.position.y
@@ -207,12 +212,12 @@ export class GameHitBall extends GameFlowBase {
         ); 
     }
     _onHitTheBall(){
-   
+     
         this.system.baseball.isActive = false;
         this.system.GeneratorManager.start(this.next());
     }
     _onSkipTheBall(){
- 
+        this.CalculateScore();
         this.system.baseball.isActive = false;
         this.system.GeneratorManager.start(this.next());
     }
@@ -226,42 +231,80 @@ export class GameHitBall extends GameFlowBase {
         this.system.p.rect(this.StrikeZonePoint.x -120/2,this.StrikeZonePoint.y - 180/2, 120, 180);
     }
     CalculateScore(){
-        console.log(this.isHitBaseball , this.isSwingbat, this.isBadBall);
+        this.system.ResultShowtext.isActive = true;
         if(this.isBadBall && this.isHitBaseball){
             console.log("壞球擊中");
+            this.system.ResultShowtext.text = "擊出!";
+            return;
         }
+        console.log(this.isSwingbat , this.isHitBaseball , this.isBadBall);
         if(this.isHitBaseball){
             console.log("擊球成功");
-           
+            this.system.ResultShowtext.text = "擊出!";
+            return;
         }
         if(this.isSwingbat){
             console.log("好球");
             this.system.strikePoint++;
+            this.system.ResultShowtext.text = "好球!";
             return;
         }
         if(this.isBadBall){
             console.log("壞球");
+            this.system.ResultShowtext.text = "壞球!";
             this.system.ballPoint++;
         }else{
             console.log("好球");
+            this.system.ResultShowtext.text = "好球!";
             this.system.strikePoint++;
         }
     }
     *next(){
-        this.CalculateScore();
-        console.log("等待下一球...");
         
-        if(this.system.AtBatOver(this.isHitBaseball , this.isRollingBall)){
-        
+        const AtBatOver = this.AtBatOver(this.isHitBaseball , this.isRollingBall);
+        if(AtBatOver == 1){
+
+            this.system.scoreboard.setCounts(this.system.strikePoint, this.system.ballPoint, this.system.outPoint , this.system.point);
+            yield* this.timer.delay(1000);
             this.system.changeState(new GameChangeBatter(this.system));
-            
+            this.system.ResultShowtext.isActive = false;
+
+            return;
+        }
+        if(AtBatOver == 2){
+            this.system.scoreboard.setCounts(this.system.strikePoint, this.system.ballPoint, this.system.outPoint , this.system.point);
+            yield* this.timer.delay(1000);
+            this.system.ResultShowtext.isActive = false;
+            SceneManager.instance.changeScene(SceneEnum.SCORE);
+ 
             return;
         }
         this.system.scoreboard.setCounts(this.system.strikePoint, this.system.ballPoint, this.system.outPoint , this.system.point);
         let nextwait = this.system.p.random(1000, 3000);
         yield* this.timer.delay(nextwait);
+        this.system.ResultShowtext.isActive = false;
         this.system.changeState(new GameHitBall(this.system));
     }
-
+    AtBatOver(ishit) {
+     
+        if(ishit){
+            this.system.ResultShowtext.text = "上壘!";
+            return 1;
+        }
+        console.log(this.system.strikePoint , this.system.ballPoint);
+        if (this.system.strikePoint >= 3) {
+            this.system.outPoint++;
+            this.system.ResultShowtext.text = "OUT!";
+            return 2; 
+        }
+        
+        if (this.system.ballPoint >= 4) {
+            this.system.point++;
+            this.system.ResultShowtext.text = "上壘!";
+            return 1;  
+        }
+     
+        return 0; // 這位打者還沒結束打擊
+    }
 
 }

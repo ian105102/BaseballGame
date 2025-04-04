@@ -96,7 +96,11 @@ export class GameScene extends IScene{
         text.position.y = HEIGHT / 8
         instance.add(text)
 
-
+        this.ResultShowtext = new DrawableText(this.p,"g45gg",50);
+        this.ResultShowtext.position.x = WIDTH / 2;
+        this.ResultShowtext.position.y = HEIGHT / 2;
+        instance.add(this.ResultShowtext);
+        this.ResultShowtext.isActive = false;
 
 
         this.countdownText = new DrawableText(this.p,"0",50);
@@ -179,25 +183,7 @@ export class GameScene extends IScene{
 
   
     }
-    AtBatOver(ishit) {
-     
-        if(ishit){
-            
-            return true;
-        }
-        console.log(this.strikePoint , this.ballPoint);
-        if (this.strikePoint >= 3) {
-            this.outPoint++;
-            return true; 
-        }
-        
-        if (this.ballPoint >= 4) {
-            this.point++;
-            return true;  
-        }
-     
-        return false; // 這位打者還沒結束打擊
-    }
+
     changeState(state){
         this.GameFlow
         this.GameFlow = state;
