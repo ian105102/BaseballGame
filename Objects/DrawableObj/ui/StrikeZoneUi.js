@@ -1,6 +1,6 @@
 import { IObject } from "../../IObject.js";
 
-export class StrikeZoneUiy extends IObject {
+export class StrikeZoneUi extends IObject {
     constructor(p) {
         super(p)
         this.size = this.p.createVector(60, 100)

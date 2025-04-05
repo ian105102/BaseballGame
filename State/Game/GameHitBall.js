@@ -7,6 +7,7 @@ import { RectangleCollision } from "../../Objects/Collisions/RectangleCollision.
 import { GameChangeBatter } from "./GameChangeBatter.js";
 import { SceneManager } from "../../SceneManager.js";
 import { SceneEnum } from "../../SceneEnum.js";
+import { WIDTH } from "../../G.js";
 
 
 
@@ -17,29 +18,31 @@ export class GameHitBall extends GameFlowBase {
         this.isHitBaseball = false;
         this.isBadBall = false;
         this.isRollingBall = false;
-    
+        this.hitType = BaseballPlay.NONE;
+   
     }
     start(){
-     
+       
+        this.centerPoint = { x:  WIDTH / 2+5, y: 550 };
         this.circleCollishion = new  CircleCollision(this.system.p);
         this.rectangleCollishion = new  RectangleCollision(this.system.p);
 
         this.rectangleCollishion.width = 60;
         this.rectangleCollishion.height = 100;
-        this.rectangleCollishion.position.x = 550;
-        this.rectangleCollishion.position.y = 550;
+        this.rectangleCollishion.position.x =  this.centerPoint.x;
+        this.rectangleCollishion.position.y =  this.centerPoint.y;
         this.rectangleCollishion.isActive = true;
 
         this.rectangleCollishionBig = new  RectangleCollision(this.system.p);
         this.rectangleCollishionBig.width = 120;
         this.rectangleCollishionBig.height = 180;
-        this.rectangleCollishionBig.position.x = 550;
-        this.rectangleCollishionBig.position.y = 550;
+        this.rectangleCollishionBig.position.x =  this.centerPoint.x;
+        this.rectangleCollishionBig.position.y =  this.centerPoint.y;
         this.rectangleCollishionBig.isActive = true;
 
         this.timer = new WaitTimer();
         this.circleCollishion.radius = 15;
-        this.StrikeZonePoint = { x: 550, y: 550 };
+        this.StrikeZonePoint = { x: this.centerPoint.x, y: this.centerPoint.y };
         this.system.GeneratorManager.start(this.wait());
   
     }
@@ -49,7 +52,7 @@ export class GameHitBall extends GameFlowBase {
         this.ThrowBaseball();
     }
     ThrowBaseball() {
-        console.log("開始投球");
+      
         this.system.baseball.isActive = true;
         const { baseball, bat, ballCurveEffect, p } = this.system;
         // 隨機變化投球位置
@@ -67,9 +70,12 @@ export class GameHitBall extends GameFlowBase {
         );
         baseball.scale.set(0, 0);
      
-
-       
-   // 判斷是否為壞球
+        this.system.hitPointUi.position.set(
+            this.StrikeZonePoint.x + randomX / 2,
+            this.StrikeZonePoint.y + randomY 
+        );
+        this.system.hitPointUi.isActive = true;
+        // 判斷是否為壞球
         this.isBadBall = !this.rectangleCollishion.checkCollisionWithCircle(
             this.circleCollishion
         );
@@ -79,12 +85,12 @@ export class GameHitBall extends GameFlowBase {
             [
                 { x: baseball.position.x, y: baseball.position.y },
                 { x: this.StrikeZonePoint.x + randomX, y: this.StrikeZonePoint.y - 130 + randomY },
-                { x: this.StrikeZonePoint.x + randomX / 2, y: this.StrikeZonePoint.y + randomY },
+                { x: this.StrikeZonePoint.x + randomX / 2, y: this.StrikeZonePoint.y + randomY }, // 這裡是擊球點
                 { x: this.StrikeZonePoint.x - randomX, y: this.StrikeZonePoint.y + 150 + randomY }
             ],
             (x, y, t) => this._updateBaseballPosition(x, y, t, baseball, bat, ballCurveEffect),
             () => this._onSkipTheBall(),
-            0.0001,
+            0.0002,
             0.0001
         );
     }
@@ -133,6 +139,8 @@ export class GameHitBall extends GameFlowBase {
         randomPoints.push({x: hitpoint.x, y: hitpoint.y });
         randomPoints.push({x: hitpoint.x, y: hitpoint.y });
         if(batSpeed > 0.5){   // home run
+            this.hitType = BaseballPlay.HOME_RUN;
+      
             randomPoints.push({x: hitpoint.x, y: hitpoint.y });
             let randomX = this.system.p.random(-200, 200);
             let randomY = this.system.p.random(350, 450);
@@ -148,9 +156,11 @@ export class GameHitBall extends GameFlowBase {
             this.isRollingBall = false;
             
         }else if(batSpeed > 0.1){  //一般安打
+
+            this.hitType = BaseballPlay.BASE_HIT;
             randomPoints.push({x: hitpoint.x, y: hitpoint.y });
             let randomX = this.system.p.random(-300, 300);
-            let randomY = this.system.p.random(100, 350);
+            let randomY = this.system.p.random(150, 300);
             randomPoints[1].y = hitpoint.y - randomY;
             randomPoints[1].x = hitpoint.x + randomX/2;
             randomPoints[2].y = hitpoint.y- randomY - randomY/3;
@@ -164,7 +174,7 @@ export class GameHitBall extends GameFlowBase {
             this.system.point +=1;
         }else {  //滾地球
 
-     
+            this.hitType = BaseballPlay.GROUND_BALL;
             let randomX = this.system.p.random(-300, 300);
             let randomY = this.system.p.random(30, 150);
             randomPoints[1].y = hitpoint.y - randomY;
@@ -186,14 +196,16 @@ export class GameHitBall extends GameFlowBase {
     }
 
     HitBaseball(hitPoint , size ,startVelocity ){  
-    
+
+
+        let randomPoints = this.RandomPoint(2, hitPoint , size); // 這裡輸入從arduino接收的速度
         this.CalculateScore();
         this.midPoint = {
             x: this.system.baseball.position.x,
             y: this.system.baseball.position.y
         }
     
-        let randomPoints = this.RandomPoint(0.4, hitPoint , size); // 這裡輸入從arduino接收的速度
+     
      
         this.system.ballCurveEffect.do(
             randomPoints.randomPoints,
@@ -226,18 +238,34 @@ export class GameHitBall extends GameFlowBase {
         this.system.baseball.isActive = false;
         this.system.GeneratorManager.start(this.next());
     }
-
+    judge(ballType){
+     
+        if(ballType == BaseballPlay.GROUND_BALL){
+            this.system.ResultShowtext.text = "滾地球!";
+            return; 
+        }
+        if(ballType == BaseballPlay.HOME_RUN){
+            this.system.ResultShowtext.text = "全壘打!";
+            return; 
+        }
+        if(ballType == BaseballPlay.BASE_HIT){
+            this.system.ResultShowtext.text = "安打!";
+            return; 
+        }
+        return; 
+    }
     CalculateScore(){
         this.system.ResultShowtext.isActive = true;
+        console.log(this.isSwingbat , this.isHitBaseball , this.isBadBall);
+        console.log(this.hitType);
         if(this.isBadBall && this.isHitBaseball){
             console.log("壞球擊中");
-            this.system.ResultShowtext.text = "擊出!";
+            this.judge(this.hitType);
             return;
         }
-        console.log(this.isSwingbat , this.isHitBaseball , this.isBadBall);
         if(this.isHitBaseball){
             console.log("擊球成功");
-            this.system.ResultShowtext.text = "擊出!";
+            this.judge(this.hitType);
             return;
         }
         if(this.isSwingbat){
@@ -257,12 +285,12 @@ export class GameHitBall extends GameFlowBase {
         }
     }
     *next(){
-        
+        this.system.hitPointUi.isActive = false;
         const AtBatOver = this.AtBatOver(this.isHitBaseball , this.isRollingBall);
         if(AtBatOver == 1){
 
             this.system.scoreboard.setCounts(this.system.strikePoint, this.system.ballPoint, this.system.outPoint , this.system.point);
-            yield* this.timer.delay(1000);
+            yield* this.timer.delay(2000);
             this.system.changeState(new GameChangeBatter(this.system));
             this.system.ResultShowtext.isActive = false;
 
@@ -270,7 +298,7 @@ export class GameHitBall extends GameFlowBase {
         }
         if(AtBatOver == 2){
             this.system.scoreboard.setCounts(this.system.strikePoint, this.system.ballPoint, this.system.outPoint , this.system.point);
-            yield* this.timer.delay(1000);
+            yield* this.timer.delay(2000);
             this.system.ResultShowtext.isActive = false;
             SceneManager.instance.changeScene(SceneEnum.SCORE);
  
@@ -285,23 +313,34 @@ export class GameHitBall extends GameFlowBase {
     AtBatOver(ishit) {
      
         if(ishit){
-            this.system.ResultShowtext.text = "上壘!";
+       
             return 1;
         }
-        console.log(this.system.strikePoint , this.system.ballPoint);
+  
         if (this.system.strikePoint >= 3) {
+            this.system.strikePoint = 0;
+            this.system.ballPoint = 0;
+
             this.system.outPoint++;
             this.system.ResultShowtext.text = "OUT!";
-            return 2; 
+            return 1; 
         }
         
         if (this.system.ballPoint >= 4) {
+            this.system.strikePoint = 0;
+            this.system.ballPoint = 0;
             this.system.point++;
-            this.system.ResultShowtext.text = "上壘!";
+  
             return 1;  
         }
-     
+        if (this.system.outPoint >= 3) {
+            this.system.ResultShowtext.text = "OUT!";
+            return 2; // 結束比賽
+        }
         return 0; // 這位打者還沒結束打擊
+    }
+    update(){
+
     }
 
 }
