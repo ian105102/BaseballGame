@@ -24,7 +24,12 @@ export class SceneManager {
         gloveImg: assets.gloveImg
       });
       this.scenes.set(SceneEnum.MENU, menuScene);
-      this.scenes.set(SceneEnum.TUTORIAL, new TutorialScene(p));
+      const tutorialscene = new TutorialScene(p)
+      tutorialscene.setImages({
+        bgGrass: assets.bgGrass,
+        tv:assets.tv
+      });
+      this.scenes.set(SceneEnum.TUTORIAL, tutorialscene);
       const gameScene = new GameScene(p);
       gameScene.setImages({
         playball: assets.playball

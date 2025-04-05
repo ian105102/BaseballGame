@@ -59,21 +59,6 @@ export class GameScene extends IScene{
         this.playball = assets.playball;
         return this;
     }
-    draw() {
-        const p = this.p;
-      
-        if (!this.playball) {
-          console.log("❌ playball 圖片尚未載入！");
-          return;
-        }
-      
-        p.imageMode(p.CORNER);
-        p.background(0);
-        p.image(this.playball, 0, 0, p.width, p.height);
-      
-        // ⚠️ 這行很重要：讓所有元件繪製（Drawable 物件）
-        super.draw();
-      }
     video;
     //call after constructor
     init(){
@@ -274,7 +259,9 @@ export class GameScene extends IScene{
     }
     _on_update(delta){
 
-
+      
+        this.p.imageMode(this.p.CORNER);
+        this.p.image(this.playball, 0, 0, this.p.width, this.p.height);
         Matter.Engine.update(this.engine);
         
         this.bat.rotateEuler(0, this.p.mouseY/100 , this.p.mouseX/100);

@@ -16,6 +16,8 @@ const main_sketch = (p)=>{
         assets.playball = p.loadImage("static/ground3.png ");
         assets.ballImg = p.loadImage("static/ball.png");
         assets.gloveImg = p.loadImage("static/glove.png");
+        assets.bgGrass = p.loadImage("static/grass.png");
+        assets.tv = p.loadImage("static/TV.png")
       };
 
     let scene_manager; 
