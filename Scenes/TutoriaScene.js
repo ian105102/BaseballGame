@@ -18,7 +18,6 @@ export class TutorialScene extends IScene{
         super(p);
         TutorialScene.instance = this;
         TutorialScene.instance.init()
-        
     } 
     
 

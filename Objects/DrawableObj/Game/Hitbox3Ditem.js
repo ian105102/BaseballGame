@@ -18,7 +18,7 @@ import { IObject } from "../../IObject.js"
 export class Hitbox3Ditem extends IObject {
     #currentScale = this.p.createVector(1, 1);
 
-    constructor(p, model, world, engine, position= {x:0, y:0}, size = {x:400, y:400} ,color = "#c6780a", hitboxSize= {x:30, y:200}, rotateCenter = {x:0, y:70}) {
+    constructor(p, model, world, engine, position= {x:0, y:0}, size = {x:400, y:400} ,color = "rgb(198, 70, 10)", hitboxSize= {x:30, y:200}, rotateCenter = {x:0, y:70}) {
         super(p);
         this.p = p;
         this.view3d = new ThreeDtoTwoD(p, size, model);
@@ -132,7 +132,7 @@ export class Hitbox3Ditem extends IObject {
     _on_draw() {
        
         this.view3d.display({x:0,y:0}, this.rotation3D, this.rotateCenter, this.color, { x: 0, y: 0, z: 0 });
-        this.drawHitbox();
+        // this.drawHitbox();
     }1
 
     _on_update(delta) {}

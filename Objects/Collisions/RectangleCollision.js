@@ -23,9 +23,9 @@ export class RectangleCollision extends ICollision{
   }
 
   checkCollisionWithCircle(circleCollision){
-    return this.p.collideRectCircle(
+    return this.p.collideRectCircle(  // 似乎不用加上圓形的半徑
       this.position.x - this.width / 2,this.position.y - this.height / 2 , this.width , this.height,
-      circleCollision.position.x - circleCollision.radius, circleCollision.position.y - circleCollision.radius,
+      circleCollision.position.x, circleCollision.position.y ,
       circleCollision.radius * 2
       );
     }

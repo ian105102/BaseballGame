@@ -10,7 +10,7 @@ export class GameChangeBatter extends GameFlowBase {
     start(){
         this.timer = new WaitTimer();
         this.system.GeneratorManager.start(this.wait());
-
+        
         
 
     }

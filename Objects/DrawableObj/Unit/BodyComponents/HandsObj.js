@@ -52,16 +52,16 @@ export class Hands extends IObject {
     }
 
     drawLeftHand() {
-        this.p.fill(0, 255, 0);
-        this.p.ellipse( 0 + this.relLeft.x,  0 + this.relLeft.y, 20, 20);
+        this.p.fill("rgb(0, 0, 0)");
+        this.p.ellipse( 0 + this.relLeft.x,  0 + this.relLeft.y, 30, 30);
     }
 
     drawRightHand() {
-        this.p.fill(0, 255, 0);
-        this.p.ellipse( 0 + this.relRight.x, 0 + this.relRight.y, 20, 20);
+        this.p.fill("rgb(0, 0, 0)");
+        this.p.ellipse( 0 + this.relRight.x, 0 + this.relRight.y, 30, 30);
     }
 
-    display() {
+    _on_draw() {
      
         this.drawLeftHand();
         this.drawLeftHandsItem(this.relLeft.x,this.relLeft.y);
