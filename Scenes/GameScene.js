@@ -47,8 +47,8 @@ export class GameScene extends IScene{
         this.World = Matter.World.create({ gravity: { x: 0, y: 0 } });
         this.engine = Matter.Engine.create({ gravity: { x: 0, y: 0 } });
         this.batModel = p.loadModel('./Asset/3dObject/BaseballBat.obj',true);
-        this.backgroundimg = p.loadImage('../Asset/img/gamebg.png',true);
-        
+        this.backgroundimg = p.loadImage('../Asset/img/gamebg.png');
+        this.baseballimg = p.loadImage('../Asset/img/baseBall.png');
         this.GeneratorManager = new GeneratorManager();
 
         GameScene.instance = this;
@@ -176,8 +176,9 @@ export class GameScene extends IScene{
         instance.add(this.pitcher);
 
    
-        this.baseball = new Baseball(this.p, this.World , {x: 30, y: 30});
+        this.baseball = new Baseball(this.p, this.World , {x: 30, y: 30} ,this.baseballimg);
         this.baseball.position.set(WIDTH/2-5, HEIGHT/2);
+      
         this.baseball.isActive = false;
         instance.add(this.baseball);
 
@@ -205,6 +206,7 @@ export class GameScene extends IScene{
 
 
         this.scoreboard = new ScoreboardUi(this.p );
+        this.scoreboard.textFont = "ZCOOL KuaiLe";
         this.scoreboard.position.x = 0;
         this.scoreboard.position.y = 0;
         instance.add(this.scoreboard);
@@ -222,7 +224,7 @@ export class GameScene extends IScene{
 
 
         this.countdownText = new DrawableBorderText(this.p,"0",150 , "ZCOOL KuaiLe", "rgb(255, 255, 255)" , "rgb(0, 0, 0)" );
-        this.countdownText.strokeWeight = 5;
+        this.countdownText.strokeWeight = 20;
         this.countdownText.position.x = WIDTH / 2
         this.countdownText.position.y = HEIGHT / 2;
         instance.add(this.countdownText);
