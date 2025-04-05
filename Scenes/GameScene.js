@@ -210,14 +210,14 @@ export class GameScene extends IScene{
 
 
 
-        this.ResultShowtext = new DrawableText(this.p,"",50);
+        this.ResultShowtext = new DrawableText(this.p,"",150);
         this.ResultShowtext.position.x = WIDTH / 2;
         this.ResultShowtext.position.y = HEIGHT / 2;
         instance.add(this.ResultShowtext);
         this.ResultShowtext.isActive = false;
 
 
-        this.countdownText = new DrawableText(this.p,"0",50);
+        this.countdownText = new DrawableText(this.p,"0",150);
         this.countdownText.position.x = WIDTH / 2
         this.countdownText.position.y = HEIGHT / 2;
         instance.add(this.countdownText);
