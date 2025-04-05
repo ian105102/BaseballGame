@@ -9,6 +9,7 @@ export class DrawableBorderText extends IObject {
         this.font = font; // 可傳入字體
         this.stroke_color = stroke_color;
         this.fill_color = fill_color;
+        this.strokeWeight = 20; // 邊框粗細
     }
 
     _on_draw() {
@@ -23,7 +24,7 @@ export class DrawableBorderText extends IObject {
 
         // 邊框（描邊）
         this.p.stroke(this.stroke_color);
-        this.p.strokeWeight(3); // 邊框粗細
+        this.p.strokeWeight(this.strokeWeight); // 邊框粗細
         this.p.fill(this.fill_color); // 文字填色
         this.p.text(this.text, 0, 0);
 
