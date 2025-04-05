@@ -222,7 +222,7 @@ export class GameScene extends IScene{
 
 
         this.countdownText = new DrawableBorderText(this.p,"0",150 , "ZCOOL KuaiLe", "rgb(255, 255, 255)" , "rgb(0, 0, 0)" );
-        this.ResultShowtext.strokeWeight = 5;
+        this.countdownText.strokeWeight = 5;
         this.countdownText.position.x = WIDTH / 2
         this.countdownText.position.y = HEIGHT / 2;
         instance.add(this.countdownText);
