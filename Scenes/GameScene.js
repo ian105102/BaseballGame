@@ -55,8 +55,10 @@ export class GameScene extends IScene{
         
         
     } 
-    
-    
+    setImages(assets) {
+        this.playball = assets.playball;
+        return this;
+    }
     video;
     //call after constructor
     init(){
@@ -257,7 +259,9 @@ export class GameScene extends IScene{
     }
     _on_update(delta){
 
-
+      
+        this.p.imageMode(this.p.CORNER);
+        this.p.image(this.playball, 0, 0, this.p.width, this.p.height);
         Matter.Engine.update(this.engine);
         
         this.bat.rotateEuler(0, this.p.mouseY/100 , this.p.mouseX/100);
