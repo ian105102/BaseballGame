@@ -18,8 +18,8 @@ const main_sketch = (p)=>{
         assets.gloveImg = p.loadImage("static/glove.png");
         assets.bgGrass = p.loadImage("static/grass.png");
         assets.tv = p.loadImage("static/TV.png");
-        assets.batter = p.loadImage("static/batter.png")
-        assets.mask = p.loadImage("static/mask.png")
+        assets.batter = p.loadImage("static/batter.png");
+        assets.mask = p.loadImage("static/mask.png");
       };
 
     let scene_manager; 

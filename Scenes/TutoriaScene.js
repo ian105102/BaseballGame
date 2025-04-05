@@ -39,6 +39,7 @@ export class TutorialScene extends IScene {
     this.tv = assets.tv;
     this.batter = assets.batter;
     this.mask = assets.mask;
+    this.iansuiFont = assets.iansuiFont;
     return this;
   }
 
@@ -57,9 +58,12 @@ export class TutorialScene extends IScene {
 
     // ⛳️ Title Text
     let text = new DrawableText(this.p, "教學介面", 50);
-    text.position.x =150;
+    console.log("🔤 字型載入結果：", this.iansuiFont);
+    text.position.x = 150;
     text.position.y = HEIGHT / 9;
+    text.font = this.iansuiFont; // ✅ 套用 Iansui 字體
     this.add(text);
+
 
     // 🎥 Setup camera
     this.video = this.p.createCapture(this.p.VIDEO).size(WIDTH, HEIGHT).hide();

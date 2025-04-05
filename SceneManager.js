@@ -29,7 +29,7 @@ export class SceneManager {
         bgGrass: assets.bgGrass,
         tv:assets.tv,
         batter:assets.batter,
-        mask:assets.mask
+        mask:assets.mask,
       });
       this.scenes.set(SceneEnum.TUTORIAL, tutorialscene);
       const gameScene = new GameScene(p);
