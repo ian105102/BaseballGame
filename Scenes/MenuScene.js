@@ -37,6 +37,7 @@ export class MenuScene extends IScene {
     const text = new DrawableText(this.p, "棒球菜單介面", 50);
     text.position.x = WIDTH / 2;
     text.position.y = HEIGHT / 7;
+    this.maskHoverOffset = 0;
     this.add(text);
 
     const func = () => {

@@ -27,7 +27,9 @@ export class SceneManager {
       const tutorialscene = new TutorialScene(p)
       tutorialscene.setImages({
         bgGrass: assets.bgGrass,
-        tv:assets.tv
+        tv:assets.tv,
+        batter:assets.batter,
+        mask:assets.mask
       });
       this.scenes.set(SceneEnum.TUTORIAL, tutorialscene);
       const gameScene = new GameScene(p);
