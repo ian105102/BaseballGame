@@ -25,7 +25,7 @@ volatile bool MPUInterrupt = false;  // 中斷標誌
 void DMPDataReady() { MPUInterrupt = true; }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(LED_PIN, OUTPUT);  // 設定 LED 為輸出模式
   Serial.println("Arduino Ready");
   initMPU();
@@ -106,16 +106,6 @@ void MPU(){
         mpu.dmpGetEuler(euler, &q);
         mpu.dmpGetAccel(&aa, FIFOBuffer);
         mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-
-        // 顯示計算結果
-        /* Display Euler angles in degrees */
-        // Serial.println("ypr");
-        // Serial.println(String(ypr[0] * 180/M_PI) + 
-        //               "," + 
-        //               String(ypr[1] * 180/M_PI) + 
-        //               "," + 
-        //               String(ypr[2] * 180/M_PI));
-            
         // /* Display Quaternion values in easy matrix form: [w, x, y, z] */
         Serial.println("quat:" +
                       String(q.w) +

@@ -1,11 +1,14 @@
 
 
-export class ReceiveArduino{
-  constructor(p){
-    // this.p = p;
+class ReceiveArduino{
+  static instance = null;  // 單一實例
+
+  constructor(){
+    if (ReceiveArduino.instance) {
+      return ReceiveArduino.instance;  // 如果已有實例，直接返回現有實例
+    }
+
     // 建立 Serial 連接按鈕
-    // let button = this.p.createButton("連接 Arduino");
-    // button.mousePressed(() => this.connectPort());
     // this.connectPort();
     this.port;
     this.reader;
@@ -13,12 +16,22 @@ export class ReceiveArduino{
     
     this.euler = [0.0, 0.0, 0.0];
     this.acceleration = [0, 0, 0];
+
+    ReceiveArduino.instance = this;
   }
   
+  async connect() {
+    if (!ReceiveArduino.instance) {
+      new ReceiveArduino();  // 確保 Singleton 實例已經創建
+    }
+
+    await ReceiveArduino.instance.connectPort();
+  }
+
   async connectPort() {
     try {
       this.port = await navigator.serial.requestPort();
-      await this.port.open({ baudRate: 9600 });
+      await this.port.open({ baudRate: 115200 });
 
       const textDecoder = new TextDecoderStream();
       const readableStreamClosed = this.port.readable.pipeTo(textDecoder.writable);
@@ -49,7 +62,7 @@ export class ReceiveArduino{
   
           // 完整一行資料
           this.latestData = line;
-          console.log("最新資料:", this.latestData);
+          // console.log("最新資料:", this.latestData);
           if(this.latestData.length != 0){
             this.dataSaveToDist(this.latestData);
           }
@@ -64,10 +77,6 @@ export class ReceiveArduino{
 
   gotData(){
 
-  }
-
-  arduinoUpdate(){
-    this.connectPort()
   }
 
   dataSaveToDist(latestData){
@@ -85,3 +94,5 @@ export class ReceiveArduino{
     }
   }
 }
+
+export default  new ReceiveArduino(); 
