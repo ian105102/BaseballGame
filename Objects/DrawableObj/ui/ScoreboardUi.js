@@ -75,8 +75,8 @@ export class ScoreboardUi extends IObject {
             for (let i = 0; i < max; i++) {
                 if (i < count) {
                     p.fill(color);
-                    p.stroke(0);
-                    p.strokeWeight(2);
+                    p.stroke(color);
+                    p.strokeWeight(3);
                 } else {
                     p.noFill();
                     p.stroke(150);
