@@ -7,15 +7,6 @@ import { HEIGHT } from "../G.js";
 import { RectButton } from "../Objects/DrawableObj/Button/RectButton.js";
 import { DrawableText } from "../Objects/DrawableObj/Text/DrawableText.js";
 
-    constructor(p) {
-        if (TutorialScene.instance) {
-            
-            return TutorialScene.instance
-        }
-        super(p);
-        TutorialScene.instance = this;
-        TutorialScene.instance.init()
-    } 
     
 
 export class TutorialScene extends IScene {
@@ -187,7 +178,6 @@ export class TutorialScene extends IScene {
       { x: WIDTH - 120, y: 220 },
       { x: WIDTH - 200, y: 300 }
     ];
-  
     p.noStroke();
     for (let i = 0; i < positions.length; i++) {
       let { x, y } = positions[i];
