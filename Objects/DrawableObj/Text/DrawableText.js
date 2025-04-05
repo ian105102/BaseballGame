@@ -13,7 +13,7 @@ export class DrawableText extends IObject {
         this.p.push(); // 保護繪圖狀態
 
         this.p.strokeWeight(1);
-        this.p.textAlign(this.p.CENTER);
+        this.p.textAlign(this.p.LEFT);
         this.p.textSize(this.text_size);
 
         if (this.font) {
