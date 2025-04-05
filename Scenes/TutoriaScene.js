@@ -62,7 +62,6 @@ export class TutorialScene extends IScene {
     this.myCamera = new Camera(this.video.elt, {
       onFrame: async () => {
         if (!this.needVideo) return;
-        await poseTracker.send(this.video.elt);
       },
       width: WIDTH,
       height: HEIGHT,
@@ -114,7 +113,7 @@ export class TutorialScene extends IScene {
       const videoHeight = 180;
       const videoX = tvX + (tvWidth - videoWidth) / 2;
       const videoY = tvY + (tvHeight - videoHeight) / 2 - 52;
-      // p.image(this.video, videoX, videoY, videoWidth, videoHeight);
+      p.image(this.video, videoX, videoY, videoWidth, videoHeight);
     }
   
     this.updateRibbons();

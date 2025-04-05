@@ -11,7 +11,13 @@ const main_sketch = (p)=>{
     /// <reference types="p5" />
     //const game_scene = new GameScene(p)
     const assets = {};
-    p.preload = () => {
+    // p.preload = () => {
+        
+    //   };
+
+    let scene_manager; 
+    p.setup = () =>{
+
         assets.bgImg = p.loadImage("static/baseballGround.png");
         assets.playball = p.loadImage("static/ground3.png ");
         assets.ballImg = p.loadImage("static/ball.png");
@@ -20,12 +26,6 @@ const main_sketch = (p)=>{
         assets.tv = p.loadImage("static/TV.png");
         assets.batter = p.loadImage("static/batter.png");
         assets.mask = p.loadImage("static/mask.png");
-      };
-
-    let scene_manager; 
-    p.setup = () =>{
-
-
 
       
 

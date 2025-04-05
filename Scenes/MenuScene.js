@@ -7,6 +7,7 @@ import { SceneManager } from "../SceneManager.js";
 import { WIDTH } from "../G.js"
 import { HEIGHT } from "../G.js"
 import { DrawableText } from "../Objects/DrawableObj/Text/DrawableText.js";
+import ReceiveArduino from "../ArduinoConnectJS.js"
 
 export class MenuScene extends IScene {
   static instance = null;
@@ -81,6 +82,7 @@ export class MenuScene extends IScene {
     if (p.mouseButton === p.LEFT) {
       if (this.isMouseOver(this.ballImg, this.ballBtn)) {
         this.playing = true;
+        ReceiveArduino.connect();
         SceneManager.instance.changeScene(SceneEnum.GAME);
       } else if (this.isMouseOver(this.gloveImg, this.gloveBtn)) {
         SceneManager.instance.changeScene(SceneEnum.TUTORIAL);

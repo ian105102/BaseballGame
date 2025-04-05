@@ -26,6 +26,8 @@ import {  StrikeZoneUi } from "../Objects/DrawableObj/ui/StrikeZoneUi.js"
 import { BackImage } from "../Objects/DrawableObj/ui/BackImage.js"
 import { HitPointUi } from "../Objects/DrawableObj/ui/HitPointUi.js"
 
+import ReceiveArduino from "../ArduinoConnectJS.js"
+
 
 export class GameScene extends IScene{
     static instance = null
@@ -51,8 +53,6 @@ export class GameScene extends IScene{
 
         GameScene.instance = this;
         GameScene.instance.init()
-    
-        
         
     } 
     setImages(assets) {
@@ -107,6 +107,7 @@ export class GameScene extends IScene{
             width: 1080,
             height: 720
         }).start();
+
         
         this.strikeZoneUi = new StrikeZoneUi(this.p );
         this.strikeZoneUi.position.x = WIDTH / 2+5;
@@ -257,6 +258,7 @@ export class GameScene extends IScene{
         this.scoreboard.setCounts(0, 0,0 ,0);
 
     }
+
     _on_update(delta){
 
       
@@ -264,7 +266,27 @@ export class GameScene extends IScene{
         this.p.image(this.playball, 0, 0, this.p.width, this.p.height);
         Matter.Engine.update(this.engine);
         
-        this.bat.rotateEuler(0, this.p.mouseY/100 , this.p.mouseX/100);
+        if(!this.firstdata){
+            this.firstEuler = ReceiveArduino.euler;
+            this.oldEuler = this.firstEuler;
+            this.firstdata  = true;
+        }
+
+        // this.newEuler = ReceiveArduino.euler;
+         // 平滑過渡到新的 Euler 角度
+        // this.batEuler[0] = this.p.lerp((this.newEuler[0]-this.firstEuler[0]), (this.oldEuler[0]-this.firstEuler[0]), 0.1)
+        // this.batEuler[1] = this.p.lerp((this.newEuler[1]-this.firstEuler[1]), (this.oldEuler[1]-this.firstEuler[1]), 0.1), 
+        // this.batEuler[2] = this.p.lerp((this.newEuler[2]-this.firstEuler[2]), (this.oldEuler[2]-this.firstEuler[2]), 0.1), 
+        
+        // 旋轉 bat
+        console.log("ReceiveArduino.euler: ", ReceiveArduino.euler);
+        // console.log("this.batEuler: ", this.batEuler);
+        // this.bat.rotateEuler(this.firstEuler[0]-(this.newEuler[0]-this.oldEuler[0]),
+        //                     this.firstEuler[1]-(this.newEuler[1]-this.oldEuler[1]), 
+        //                     this.firstEuler[2]-(this.newEuler[2]-this.oldEuler[2]));
+        this.bat.rotateEuler(ReceiveArduino.euler[2]/180*this.p.PI, ReceiveArduino.euler[0]/180*this.p.PI, (-1*ReceiveArduino.euler[1])/180*this.p.PI);
+
+        this.oldEuler = this.newEuler;
        
     
       
