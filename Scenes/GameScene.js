@@ -27,6 +27,7 @@ import { BackImage } from "../Objects/DrawableObj/ui/BackImage.js"
 import { HitPointUi } from "../Objects/DrawableObj/ui/HitPointUi.js"
 
 import ReceiveArduino from "../ArduinoConnectJS.js"
+import { DrawableBorderText } from "../Objects/DrawableObj/Text/DrawableBorderText.js"
 
 
 export class GameScene extends IScene{
@@ -42,14 +43,13 @@ export class GameScene extends IScene{
     
 
         this.video;
-
+    
         this.World = Matter.World.create({ gravity: { x: 0, y: 0 } });
         this.engine = Matter.Engine.create({ gravity: { x: 0, y: 0 } });
         this.batModel = p.loadModel('./Asset/3dObject/BaseballBat.obj',true);
         this.backgroundimg = p.loadImage('../Asset/img/gamebg.png',true);
         
         this.GeneratorManager = new GeneratorManager();
-   
 
         GameScene.instance = this;
         GameScene.instance.init()
@@ -213,14 +213,16 @@ export class GameScene extends IScene{
 
 
 
-        this.ResultShowtext = new DrawableText(this.p,"",150);
+        this.ResultShowtext = new DrawableBorderText(this.p,"",150 , "ZCOOL KuaiLe" , "rgb(255, 255, 255)" , "rgb(0, 0, 0)" );
+        this.ResultShowtext.strokeWeight = 20;
         this.ResultShowtext.position.x = WIDTH / 2;
         this.ResultShowtext.position.y = HEIGHT / 2;
         instance.add(this.ResultShowtext);
         this.ResultShowtext.isActive = false;
 
 
-        this.countdownText = new DrawableText(this.p,"0",150);
+        this.countdownText = new DrawableBorderText(this.p,"0",150 , "ZCOOL KuaiLe", "rgb(255, 255, 255)" , "rgb(0, 0, 0)" );
+        this.ResultShowtext.strokeWeight = 5;
         this.countdownText.position.x = WIDTH / 2
         this.countdownText.position.y = HEIGHT / 2;
         instance.add(this.countdownText);
@@ -241,8 +243,6 @@ export class GameScene extends IScene{
 
         instance.add(this.circle); // 轉場特效用球體，需要覆蓋所有物件
         this.objEffect = new ObjEffect(this.p, this.circle);
-
-
 
 
     }
