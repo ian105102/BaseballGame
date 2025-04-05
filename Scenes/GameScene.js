@@ -279,12 +279,12 @@ export class GameScene extends IScene{
         // this.batEuler[2] = this.p.lerp((this.newEuler[2]-this.firstEuler[2]), (this.oldEuler[2]-this.firstEuler[2]), 0.1), 
         
         // 旋轉 bat
-        // console.log("ReceiveArduino.euler: ", ReceiveArduino.euler);
+        console.log("ReceiveArduino.euler: ", ReceiveArduino.euler);
         // console.log("this.batEuler: ", this.batEuler);
         // this.bat.rotateEuler(this.firstEuler[0]-(this.newEuler[0]-this.oldEuler[0]),
         //                     this.firstEuler[1]-(this.newEuler[1]-this.oldEuler[1]), 
         //                     this.firstEuler[2]-(this.newEuler[2]-this.oldEuler[2]));
-        this.bat.rotateEuler(ReceiveArduino.euler[0], ReceiveArduino.euler[1], ReceiveArduino.euler[2]);
+        this.bat.rotateEuler(ReceiveArduino.euler[2]/180*this.p.PI, ReceiveArduino.euler[0]/180*this.p.PI, (-1*ReceiveArduino.euler[1])/180*this.p.PI);
 
         this.oldEuler = this.newEuler;
        
