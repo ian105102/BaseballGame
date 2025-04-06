@@ -146,7 +146,7 @@ export class GameHitBall extends GameFlowBase {
       
             randomPoints.push({x: hitpoint.x, y: hitpoint.y });
             let randomX = this.system.p.random(-200, 200);
-            let randomY = this.system.p.random(350, 450);
+            let randomY = this.system.p.random(400, 450);
             randomPoints[1].y = hitpoint.y - randomY;
             randomPoints[1].x = hitpoint.x + randomX/2;
             randomPoints[2].y = hitpoint.y- randomY - randomY/3;
