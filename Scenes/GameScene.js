@@ -268,8 +268,7 @@ export class GameScene extends IScene{
         this.swingSpeed[1] = ReceiveArduino.acceleration[1] - ReceiveArduino.correctionAcceleration[1];
         this.swingSpeed[2] = ReceiveArduino.acceleration[2] - ReceiveArduino.correctionAcceleration[2];
 
-        
-        console.log("swingSpeed: ", this.swingSpeed);
+     
 
         this.swingSpeed = [
             ReceiveArduino.acceleration[0] - ReceiveArduino.correctionAcceleration[0],
@@ -279,9 +278,9 @@ export class GameScene extends IScene{
         
         // 計算三軸加速度的向量大小
         this.swingMagnitude = Math.sqrt(
-            Math.pow(10000000, 2) +
-            Math.pow(10000000, 2) +
-            Math.pow(10000000, 2)
+            Math.pow(this.swingSpeed[0], 2) +
+            Math.pow(this.swingSpeed[1], 2) +
+            Math.pow(this.swingSpeed[2], 2)
         );
         
         // 旋轉 bat
