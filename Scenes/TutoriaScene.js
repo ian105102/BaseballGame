@@ -24,8 +24,6 @@ export class TutorialScene extends IScene {
   constructor(p) {
     if (TutorialScene.instance) return TutorialScene.instance;
     super(p);
-    this.soundManager = new SoundManager(p);
-    this.soundManager.loadSounds();
     this.needVideo = true;
     this.video;
     this.myCamera;
@@ -156,7 +154,6 @@ export class TutorialScene extends IScene {
   OnStop() { this.needVideo = false; }
   OnStart() { 
     this.needVideo = true;
-    this.soundManager.playWhenReady("Theme", "loop"); 
   }
 
   updateRibbons() {

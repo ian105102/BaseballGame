@@ -11,15 +11,33 @@ export class SoundManager {
     }
   
     loadSounds() {
-      this.sounds["Theme"] = this.p.loadSound("./music/Theme.mp3",
-        () => {
-          console.log("🎵 Theme 載入完成");
-          this.ready["Theme"] = true;
-        },
-        () => {
-          console.error("❌ Theme 載入失敗！");
-        });
-    }
+        this.sounds = {}; // 初始化音效容器
+      
+        const basePath = "./music/";
+      
+        const soundFiles = [
+          "button1.mp3",
+          "button2.mp3",
+          "catch ball1.mp3",
+          "catch ball2.mp3",
+          "catch ball3.mp3",
+          "Correct.mp3",
+          "Crowd Ambient.mp3",
+          "Crowd Cheer.mp3",
+          "hit1.mp3",
+          "hit2.mp3",
+          "hit3.mp3",
+          "Theme.mp3",
+          "Waiting loop.mp3",
+          "Wrong.mp3"
+        ];
+      
+        for (const fileName of soundFiles) {
+          const key = fileName.replace(".mp3", ""); // 把檔名當成 key（不含副檔名）
+          this.sounds[key] = this.p.loadSound(basePath + fileName);
+        }
+      }
+      
   
     play(name) {
       if (this.sounds[name]) this.sounds[name].play();
@@ -40,17 +58,56 @@ export class SoundManager {
     }
   
     // ✅ 等載入好後再播放（play or loop）
-    playWhenReady(name, mode = "play") {
-      if (this.ready[name]) {
-        mode === "loop" ? this.loop(name) : this.play(name);
-      } else {
-        const wait = setInterval(() => {
-          if (this.ready[name]) {
-            mode === "loop" ? this.loop(name) : this.play(name);
-            clearInterval(wait);
-          }
-        }, 100); // 每 100ms 檢查一次
+    playWhenReady(name, mode = "play", callback = null) {
+        const sound = this.sounds[name];
+      
+        if (!sound) {
+          console.warn(`⚠️ 音效 ${name} 尚未註冊於 sounds`);
+          return;
+        }
+      
+        // 防止重複播放
+        if (sound.isPlaying()) return;
+      
+        // 防止重複監聽
+        if (this._pendingCheck && this._pendingCheck[name]) return;
+      
+        // 已經載入就直接播放
+        if (sound.isLoaded()) {
+          console.log(`🎵 [立即播放] ${name} → ${mode}`);
+          this._playSound(sound, mode, callback);
+        } else {
+          console.log(`⏳ [等待音樂] ${name} 尚未載入，設置監聽...`);
+      
+          if (!this._pendingCheck) this._pendingCheck = {};
+          this._pendingCheck[name] = true;
+      
+          const checkLoaded = setInterval(() => {
+            if (sound.isLoaded()) {
+              clearInterval(checkLoaded);
+              delete this._pendingCheck[name];
+      
+              if (!sound.isPlaying()) {
+                console.log(`🎵 [延遲播放] ${name} 載入完成 → ${mode}`);
+                this._playSound(sound, mode, callback);
+              }
+            }
+          }, 100);
+        }
       }
-    }
+      
+      // 🔧 把 play / loop 撥放邏輯獨立成一個函數
+      _playSound(sound, mode, callback) {
+        if (mode === "loop") sound.loop();
+        else sound.play();
+      
+        if (callback) callback();
+      }
+      
+      
+      
+      
+      
+      
   }
   
