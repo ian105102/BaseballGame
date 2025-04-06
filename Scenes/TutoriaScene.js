@@ -30,6 +30,9 @@ export class TutorialScene extends IScene {
     this.textObjects = [];
     this.maskHoverOffset = 0;
     this.backHoverOffset = 0;
+    
+    this.soundManager = new SoundManager(p); // 只建立一次
+    this.soundManager.loadSounds(); 
     TutorialScene.instance = this;
     this.init();
   }
@@ -147,6 +150,7 @@ export class TutorialScene extends IScene {
 
   mousePressed() {
     if (this.isMouseOverMask()) {
+      this.soundManager.playWhenReady("catch ball3", "play");
       SceneManager.instance.changeScene(SceneEnum.MENU);
     }
   }
