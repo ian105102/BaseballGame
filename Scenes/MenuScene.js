@@ -186,11 +186,15 @@ export class MenuScene extends IScene {
     const p = this.p;
     if (p.mouseButton === p.LEFT) {
       if (this.isMouseOver(this.ballImg, this.ballBtn)) {
-        this.playing = true;
-        ReceiveArduino.connect();
-        SceneManager.instance.changeScene(SceneEnum.GAME);
-        this.soundManager.playWhenReady("button2", "play"); 
+        if(ReceiveArduino.arduinoConnected){
+          this.playing = true;
+          SceneManager.instance.changeScene(SceneEnum.GAME);
+        } else {
+          alert("請點擊RULES進行教學, 並校正球棒角度!");
+          console.log("is not connect Arduino!");
+        }
       } else if (this.isMouseOver(this.gloveImg, this.gloveBtn)) {
+        ReceiveArduino.connect();
         SceneManager.instance.changeScene(SceneEnum.TUTORIAL);
         this.soundManager.playWhenReady("button1", "play");
       }
