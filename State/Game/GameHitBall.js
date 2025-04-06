@@ -141,12 +141,12 @@ export class GameHitBall extends GameFlowBase {
         randomPoints.push({x: hitpoint.x, y: hitpoint.y});
         randomPoints.push({x: hitpoint.x, y: hitpoint.y });
         randomPoints.push({x: hitpoint.x, y: hitpoint.y });
-        if(batSpeed > 0.5){   // home run
+        if(batSpeed >4000){   // home run
             this.hitType = BaseballPlay.HOME_RUN;
-      
+            
             randomPoints.push({x: hitpoint.x, y: hitpoint.y });
             let randomX = this.system.p.random(-200, 200);
-            let randomY = this.system.p.random(350, 450);
+            let randomY = this.system.p.random(400, 450);
             randomPoints[1].y = hitpoint.y - randomY;
             randomPoints[1].x = hitpoint.x + randomX/2;
             randomPoints[2].y = hitpoint.y- randomY - randomY/3;
@@ -154,11 +154,11 @@ export class GameHitBall extends GameFlowBase {
             randomPoints[3].y = hitpoint.y- randomY - randomY/5;
             randomPoints[3].x = hitpoint.x + randomX + randomX/2;
             type = BaseballPlay.HOME_RUN;
-            endSize =0;
+            endSize =0; 
 
             this.isRollingBall = false;
             
-        }else if(batSpeed > 0.1){  //一般安打
+        }else if(batSpeed > 2000){  //一般安打
 
             this.hitType = BaseballPlay.BASE_HIT;
             randomPoints.push({x: hitpoint.x, y: hitpoint.y });
@@ -174,7 +174,7 @@ export class GameHitBall extends GameFlowBase {
             endSize =size*0.1;
 
 
-            this.system.point +=1;
+       
         }else {  //滾地球
 
             this.hitType = BaseballPlay.GROUND_BALL;
@@ -187,7 +187,7 @@ export class GameHitBall extends GameFlowBase {
             endSize =size*0.5;
 
             type = BaseballPlay.GROUND_BALL;
-            this.system.point +=3;
+         
         }
         return {
             randomPoints: randomPoints,
@@ -201,7 +201,7 @@ export class GameHitBall extends GameFlowBase {
     HitBaseball(hitPoint , size ,startVelocity ){  
 
 
-        let randomPoints = this.RandomPoint(2, hitPoint , size); // 這裡輸入從arduino接收的速度
+        let randomPoints = this.RandomPoint(this.system.swingMagnitude, hitPoint , size); // 這裡輸入從arduino接收的速度
         this.CalculateScore();
         this.midPoint = {
             x: this.system.baseball.position.x,
@@ -247,14 +247,17 @@ export class GameHitBall extends GameFlowBase {
      
         if(ballType == BaseballPlay.GROUND_BALL){
             this.system.ResultShowtext.text = "滾地球!";
+            this.system.point +=1;
             return; 
         }
         if(ballType == BaseballPlay.HOME_RUN){
             this.system.ResultShowtext.text = "全壘打!";
+            this.system.point +=3;
             return; 
         }
         if(ballType == BaseballPlay.BASE_HIT){
             this.system.ResultShowtext.text = "安打!";
+            this.system.point +=2;
             return; 
         }
         return; 
@@ -266,6 +269,7 @@ export class GameHitBall extends GameFlowBase {
         if(this.isBadBall && this.isHitBaseball){
             console.log("壞球擊中");
             this.judge(this.hitType);
+
             return;
         }
         if(this.isHitBaseball){
