@@ -53,18 +53,18 @@ export class Hands extends IObject {
 
     drawLeftHand() {
         this.p.fill("rgb(0, 0, 0)");
-        this.p.ellipse( 0 + this.relLeft.x,  0 + this.relLeft.y, 30, 30);
+        this.p.ellipse( 0 + this.relLeft.x- this.position.x,  0 + this.relLeft.y- this.position.y, 30, 30);
     }
 
     drawRightHand() {
         this.p.fill("rgb(0, 0, 0)");
-        this.p.ellipse( 0 + this.relRight.x, 0 + this.relRight.y, 30, 30);
+        this.p.ellipse( 0 + this.relRight.x- this.position.x, 0 + this.relRight.y- this.position.y, 30, 30);
     }
 
     _on_draw() {
      
         this.drawLeftHand();
-        this.drawLeftHandsItem(this.relLeft.x,this.relLeft.y);
+        this.drawLeftHandsItem(this.relLeft.x ,this.relLeft.y);
         this.drawRightHand();
         this.drawRightHandsItem(this.relRight.x, this.relRight.y);
     }

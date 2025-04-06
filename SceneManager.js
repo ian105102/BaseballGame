@@ -3,6 +3,7 @@ import { GameScene } from "./Scenes/GameScene.js";
 import { MenuScene } from "./Scenes/MenuScene.js";
 import { ScoreScene } from "./Scenes/ScoreScene.js";
 import { TutorialScene } from "./Scenes/TutoriaScene.js";
+import { InitPoseScene } from "./Scenes/InitPoseScene.js";
 
 
 
@@ -17,6 +18,11 @@ export class SceneManager {
        
       this.assets = assets;
       this.scenes = new Map();
+
+      const initPoseScene = new InitPoseScene(p);
+      this.scenes.set(SceneEnum.INIT_POSE, initPoseScene);
+
+
       const menuScene = new MenuScene(p);
       menuScene.setImages({
         bgImg: assets.bgImg,

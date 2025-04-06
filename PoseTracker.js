@@ -1,17 +1,16 @@
 
-class PoseTracker {
+export class PoseTracker {
   static #instance;
   #pose;
   #smoothLeftHand = { x: 0, y: 0 };
   #smoothRightHand = { x: 0, y: 0 };
   #lerpFactor = 0.1; 
 
-  constructor() {
+  constructor(p) {
     if (PoseTracker.#instance) {
       return PoseTracker.#instance;
     }
     PoseTracker.#instance = this;
-
     this.#pose = new Pose({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
     });
@@ -25,11 +24,36 @@ class PoseTracker {
       minDetectionConfidence: 0.5,
       minTrackingConfidence: 0.5
     });
-
+    this.p = p;
+    this.width = 1080;
+    this.height = 720;
+    this.video = this.p.createCapture(this.p.VIDEO)
+    .size(1080, 720)
+    .hide();
     this.detections_pose = [];
     this.#pose.onResults((results) => this.gotPose(results));
     this.OnGetPose = function (results) {};
+    this.needVideo = false;
+    this.flippedGraphics = this.p.createGraphics(this.width,  this.height);
+    this.myCamera = new Camera(this.video.elt, {
+      onFrame: async () => {
+          if (!this.needVideo) return;
+  
+          this.flippedGraphics.push();
+          this.flippedGraphics.translate(this.width, 0); 
+          this.flippedGraphics.scale(-1, 1);         
+          this.flippedGraphics.image(this.video, 0, 0,  this.width , this.height);
+          this.flippedGraphics.pop();
+  
+          // 把鏡像後的畫面傳送給 poseTracker
+          await this.send(this.flippedGraphics.canvas);
+      },
+      width:  this.width,
+      height:  this.height
+  }).start(); 
+
   }
+
 
   setOptions(options) {
     this.#pose.setOptions(options);
@@ -85,6 +109,14 @@ class PoseTracker {
       rightHand: this.#smoothRightHand
     };
   }
+
+  static getInstance(p) {
+    if (!PoseTracker.#instance) {
+    
+      new PoseTracker(p); // 實例會自動賦值給 #instance
+    }
+    return PoseTracker.#instance;
+  }
+
 }
 
-export default new PoseTracker();

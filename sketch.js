@@ -4,20 +4,23 @@
 import { SceneManager } from "./SceneManager.js"
 import { WIDTH } from "./G.js"
 import { HEIGHT } from "./G.js"
-import poseTracker from './detection.js';
+
 import { SoundManager } from './AudioController/SoundManager.js';
-import{AssetLoader }from './AssetLoader.js';
+
+
+import {PoseTracker} from "./PoseTracker.js";
 const main_sketch = (p)=>{
     /// <reference types="p5" />
     //const game_scene = new GameScene(p)
     const assets = {};
     // p.preload = () => {
-        
+
     //   };
     let soundManager;
     let scene_manager; 
     p.setup = () =>{
 
+        PoseTracker.getInstance(p);
         assets.bgImg = p.loadImage("static/baseballGround.png");
         assets.playball = p.loadImage("static/ground3.png ");
         assets.ballImg = p.loadImage("static/ball.png");

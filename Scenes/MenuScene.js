@@ -186,6 +186,7 @@ export class MenuScene extends IScene {
     const p = this.p;
     if (p.mouseButton === p.LEFT) {
       if (this.isMouseOver(this.ballImg, this.ballBtn)) {
+        SceneManager.instance.changeScene(SceneEnum.GAME);
         if(ReceiveArduino.arduinoConnected){
           this.playing = true;
           SceneManager.instance.changeScene(SceneEnum.GAME);
@@ -195,7 +196,7 @@ export class MenuScene extends IScene {
         }
       } else if (this.isMouseOver(this.gloveImg, this.gloveBtn)) {
         ReceiveArduino.connect();
-        SceneManager.instance.changeScene(SceneEnum.TUTORIAL);
+        SceneManager.instance.changeScene(SceneEnum.TUTORIAL );
         this.soundManager.playWhenReady("button1", "play");
       }
     }

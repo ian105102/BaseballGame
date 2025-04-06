@@ -12,7 +12,7 @@ import { Bat } from "../Objects/DrawableObj/Game/Bat.js"
 import { Hitbox3Ditem } from "../Objects/DrawableObj/Game/Hitbox3Ditem.js"
 import { AssetLoader } from "../AssetLoader.js"
 import { Character } from "../Objects/DrawableObj/Unit/CharacterObj.js"
-import poseTracker from '../detection.js';
+
 import { CurveMoveEffect } from "../Objects/Utils/CurveMoveEffect.js"
 import { Baseball } from "../Objects/DrawableObj/Ball/Baseball.js"
 import { GameCountdown } from "../State/Game/GameCountdown.js"
@@ -29,6 +29,9 @@ import { HitPointUi } from "../Objects/DrawableObj/ui/HitPointUi.js"
 import ReceiveArduino from "../ArduinoConnectJS.js"
 import { DrawableBorderText } from "../Objects/DrawableObj/Text/DrawableBorderText.js"
 
+import {PoseTracker} from "../PoseTracker.js"
+import { SoundManager } from "../AudioController/SoundManager.js"
+
 
 export class GameScene extends IScene{
     static instance = null
@@ -42,14 +45,19 @@ export class GameScene extends IScene{
         this.gameCanva = document.querySelector(".GameCanvas");
     
 
-        this.video;
-    
+        this.poseTracker = PoseTracker.getInstance(this.p);
+        
         this.World = Matter.World.create({ gravity: { x: 0, y: 0 } });
         this.engine = Matter.Engine.create({ gravity: { x: 0, y: 0 } });
         this.batModel = p.loadModel('./Asset/3dObject/BaseballBat.obj',true);
         this.backgroundimg = p.loadImage('../Asset/img/gamebg.png');
         this.baseballimg = p.loadImage('../Asset/img/baseBall.png');
         this.GeneratorManager = new GeneratorManager();
+        this.Font = p.loadFont('../Font/jf-openhuninn-2.1.ttf');
+        this.hitSound = p.loadSound('../music/hit1.mp3');
+        this.soundManager = new SoundManager(p); 
+        this.soundManager.loadSounds();
+      
 
         GameScene.instance = this;
         GameScene.instance.init()
@@ -85,28 +93,10 @@ export class GameScene extends IScene{
         instance.add(this.Backimage);
 
 
-        this.needVideo = true;
-        this.video = this.p.createCapture(this.p.VIDEO)
-        .size(WIDTH, HEIGHT)
-        .hide();
-        this.flippedGraphics = this.p.createGraphics(WIDTH, HEIGHT);
-        this.myCamera = new Camera(this.video.elt, {
-            onFrame: async () => {
-                if (!this.needVideo) return;
-        
-                // 將翻轉後的影像畫到離屏畫布
-                this.flippedGraphics.push();
-                this.flippedGraphics.translate(WIDTH, 0);   // 移動到畫布右邊
-                this.flippedGraphics.scale(-1, 1);          // 水平翻轉
-                this.flippedGraphics.image(this.video, 0, 0, WIDTH, HEIGHT);
-                this.flippedGraphics.pop();
-        
-                // 把鏡像後的畫面傳送給 poseTracker
-                await poseTracker.send(this.flippedGraphics.canvas);
-            },
-            width: 1080,
-            height: 720
-        }).start();
+
+  
+
+
 
         
         this.strikeZoneUi = new StrikeZoneUi(this.p );
@@ -206,7 +196,7 @@ export class GameScene extends IScene{
 
 
         this.scoreboard = new ScoreboardUi(this.p );
-        this.scoreboard.textFont = "ZCOOL KuaiLe";
+        this.scoreboard.textFont = this.Font;
         this.scoreboard.position.x = 0;
         this.scoreboard.position.y = 0;
         instance.add(this.scoreboard);
@@ -215,7 +205,7 @@ export class GameScene extends IScene{
 
 
 
-        this.ResultShowtext = new DrawableBorderText(this.p,"",150 , "ZCOOL KuaiLe" , "rgb(255, 255, 255)" , "rgb(0, 0, 0)" );
+        this.ResultShowtext = new DrawableBorderText(this.p,"",150 , this.Font , "rgb(255, 255, 255)" , "rgb(0, 0, 0)" );
         this.ResultShowtext.strokeWeight = 20;
         this.ResultShowtext.position.x = WIDTH / 2;
         this.ResultShowtext.position.y = HEIGHT / 2;
@@ -223,7 +213,7 @@ export class GameScene extends IScene{
         this.ResultShowtext.isActive = false;
 
 
-        this.countdownText = new DrawableBorderText(this.p,"0",150 , "ZCOOL KuaiLe", "rgb(255, 255, 255)" , "rgb(0, 0, 0)" );
+        this.countdownText = new DrawableBorderText(this.p,"0",150 ,this.Font, "rgb(255, 255, 255)" , "rgb(0, 0, 0)" );
         this.countdownText.strokeWeight = 20;
         this.countdownText.position.x = WIDTH / 2
         this.countdownText.position.y = HEIGHT / 2;
@@ -233,6 +223,7 @@ export class GameScene extends IScene{
         this.videoImage = new BackImage(this.p, this.backgroundimg);
         this.videoImage.size.set(270, 180);
         this.videoImage.isMirror = true; // 鏡像處理
+        this.videoImage.img = this.poseTracker.video;
         this.videoImage.position.set(WIDTH - 290/2, HEIGHT - 200/2);
       
         instance.add(this.videoImage);
@@ -251,7 +242,7 @@ export class GameScene extends IScene{
     OnStart(){
      
         this.changeState(new GameCountdown(GameScene.instance) );
-        this.needVideo = true;
+        this.poseTracker.needVideo = true;
         this.strikePoint = 0;
         this.ballPoint = 0;
         this.outPoint = 0;
@@ -275,7 +266,21 @@ export class GameScene extends IScene{
         this.swingSpeed[0] = ReceiveArduino.acceleration[0] - ReceiveArduino.correctionAcceleration[0];
         this.swingSpeed[1] = ReceiveArduino.acceleration[1] - ReceiveArduino.correctionAcceleration[1];
         this.swingSpeed[2] = ReceiveArduino.acceleration[2] - ReceiveArduino.correctionAcceleration[2];
-        // console.log("swingSpeed: ", this.swingSpeed);
+
+     
+
+        this.swingSpeed = [
+            ReceiveArduino.acceleration[0] - ReceiveArduino.correctionAcceleration[0],
+            ReceiveArduino.acceleration[1] - ReceiveArduino.correctionAcceleration[1],
+            ReceiveArduino.acceleration[2] - ReceiveArduino.correctionAcceleration[2]
+        ];
+        
+        // 計算三軸加速度的向量大小
+        this.swingMagnitude = Math.sqrt(
+            Math.pow(this.swingSpeed[0], 2) +
+            Math.pow(this.swingSpeed[1], 2) +
+            Math.pow(this.swingSpeed[2], 2)
+        );
         
         // 旋轉 bat
                             
@@ -286,29 +291,26 @@ export class GameScene extends IScene{
                             ReceiveArduino.euler[2], // 垂直旋轉 -1  0
                             -1*ReceiveArduino.euler[1]+this.p.PI); // 畫大圓 -1   2
         // this.bat.rotateQuaternion(ReceiveArduino.quat[0], ReceiveArduino.quat[1], ReceiveArduino.quat[2], ReceiveArduino.quat[3]);
-       
-    
-      
+
         this.bat.setPosition(this.Player.hands.getrelLeft().x, this.Player.hands.getrelLeft().y);
-       
-        this.Player.hands.setLeftHandPosition(50, 50);
-        this.Player.hands.setRightHandPosition(-50, 50);
-        let handPositions = poseTracker.getHandToShoulderDistances();
+
+
+        let handPositions = this.poseTracker.getHandToShoulderDistances();
         this.Player.hands.setLeftHandPosition(handPositions.leftHand.x * 400,handPositions.leftHand.y * 400);
         this.Player.hands.setRightHandPosition(handPositions.rightHand.x * 400, handPositions.rightHand.y * 400);
     
+        // console.log("handPositions: ", handPositions);
 
-       
         this.ballCurveEffect.update(delta);
 
-        this.videoImage.img = this.video;
+
 
 
         this.GameFlow.update(delta);
         this.GeneratorManager.update();
     }
     OnStop(){
-        this.needVideo = false;
+        this.poseTracker.needVideo = false;
         this.GeneratorManager.clearAll();
         this.changeState(new GameNone(GameScene.instance));
 
