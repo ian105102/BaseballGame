@@ -6,6 +6,7 @@ import { WIDTH } from "../G.js";
 import { HEIGHT } from "../G.js";
 import { RectButton } from "../Objects/DrawableObj/Button/RectButton.js";
 import { DrawableText } from "../Objects/DrawableObj/Text/DrawableText.js";
+import { SoundManager } from "../AudioController/SoundManager.js";
 
 import ReceiveArduino from "../ArduinoConnectJS.js"
     
@@ -32,6 +33,9 @@ export class TutorialScene extends IScene {
     this.textObjects = [];
     this.maskHoverOffset = 0;
     this.backHoverOffset = 0;
+    
+    this.soundManager = new SoundManager(p); // 只建立一次
+    this.soundManager.loadSounds(); 
     TutorialScene.instance = this;
     this.init();
   }
@@ -68,8 +72,7 @@ export class TutorialScene extends IScene {
     };
     this.ribbons = []; // 儲存所有彩帶
     this.ribbonColors = ['#e63946', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
-
-    this.video = this.p.createCapture(this.p.VIDEO).size(WIDTH, HEIGHT).hide();
+    this.video = p.createCapture(p.VIDEO).size(WIDTH, HEIGHT).hide();
     this.myCamera = new Camera(this.video.elt, {
       onFrame: async () => {
         if (!this.needVideo) return;
@@ -200,12 +203,15 @@ export class TutorialScene extends IScene {
 
   mousePressed() {
     if (this.isMouseOverMask()) {
+      this.soundManager.playWhenReady("catch ball3", "play");
       SceneManager.instance.changeScene(SceneEnum.MENU);
     }
   }
 
   OnStop() { this.needVideo = false; }
-  OnStart() { this.needVideo = true; }
+  OnStart() { 
+    this.needVideo = true;
+  }
 
   updateRibbons() {
     const tvX = (WIDTH - 512) / 2;

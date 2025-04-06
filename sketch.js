@@ -5,7 +5,7 @@ import { SceneManager } from "./SceneManager.js"
 import { WIDTH } from "./G.js"
 import { HEIGHT } from "./G.js"
 import poseTracker from './detection.js';
-
+import { SoundManager } from './AudioController/SoundManager.js';
 import{AssetLoader }from './AssetLoader.js';
 const main_sketch = (p)=>{
     /// <reference types="p5" />
@@ -14,7 +14,7 @@ const main_sketch = (p)=>{
     // p.preload = () => {
         
     //   };
-
+    let soundManager;
     let scene_manager; 
     p.setup = () =>{
 
@@ -35,8 +35,8 @@ const main_sketch = (p)=>{
         assets.joystick = p.loadImage("static/joystick.png");
         assets.mvp = p.loadImage("static/MVP.png");
         assets.Baseball = p.loadImage("static/Baseball.png")
-
-    
+        soundManager = new SoundManager(p); // ⬅ 傳入 p5 實例
+        soundManager.loadSounds();
         p.is_left_pressing = false
         p.is_right_pressing = false
 
@@ -58,7 +58,6 @@ const main_sketch = (p)=>{
     }
     
     p.draw = () =>{
-       
         p.background(220);
         
 
