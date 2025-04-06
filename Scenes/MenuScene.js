@@ -189,8 +189,10 @@ export class MenuScene extends IScene {
         this.playing = true;
         ReceiveArduino.connect();
         SceneManager.instance.changeScene(SceneEnum.GAME);
+        this.soundManager.playWhenReady("button2", "play"); 
       } else if (this.isMouseOver(this.gloveImg, this.gloveBtn)) {
         SceneManager.instance.changeScene(SceneEnum.TUTORIAL);
+        this.soundManager.playWhenReady("button1", "play");
       }
     }
   }

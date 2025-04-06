@@ -4,109 +4,125 @@ export class SoundManager {
   
     constructor(p) {
       if (SoundManager.instance) return SoundManager.instance;
+  
       this.p = p;
       this.sounds = {};
-      this.ready = {}; // ✅ 加這個追蹤載入完成
+      this.ready = {};
+      this._pendingCheck = {};
+      this._looped = {}; // 🔁 防止背景音樂重複 loop
       SoundManager.instance = this;
     }
   
     loadSounds() {
-        this.sounds = {}; // 初始化音效容器
-      
-        const basePath = "./music/";
-      
-        const soundFiles = [
-          "button1.mp3",
-          "button2.mp3",
-          "catch ball1.mp3",
-          "catch ball2.mp3",
-          "catch ball3.mp3",
-          "Correct.mp3",
-          "Crowd Ambient.mp3",
-          "Crowd Cheer.mp3",
-          "hit1.mp3",
-          "hit2.mp3",
-          "hit3.mp3",
-          "Theme.mp3",
-          "Waiting loop.mp3",
-          "Wrong.mp3"
-        ];
-      
-        for (const fileName of soundFiles) {
-          const key = fileName.replace(".mp3", ""); // 把檔名當成 key（不含副檔名）
-          this.sounds[key] = this.p.loadSound(basePath + fileName);
-        }
+      this.sounds = {};
+  
+      const basePath = "./music/";
+  
+      const soundFiles = [
+        "button1.mp3",
+        "button2.mp3",
+        "catch ball1.mp3",
+        "catch ball2.mp3",
+        "catch ball3.mp3",
+        "Correct.mp3",
+        "Crowd Ambient.mp3",
+        "Crowd Cheer.mp3",
+        "hit1.mp3",
+        "hit2.mp3",
+        "hit3.mp3",
+        "Theme.mp3",
+        "Waiting loop.mp3",
+        "Wrong.mp3"
+      ];
+  
+      for (const fileName of soundFiles) {
+        const key = fileName.replace(".mp3", "");
+        this.sounds[key] = this.p.loadSound(basePath + fileName);
       }
-      
+    }
   
     play(name) {
-      if (this.sounds[name]) this.sounds[name].play();
+      const sound = this.sounds[name];
+      if (sound) {
+        const clone = sound.clone();
+        clone.setVolume(1.0);
+        clone.play();
+      }
     }
   
     loop(name) {
-      if (this.sounds[name] && !this.sounds[name].isPlaying()) {
-        this.sounds[name].loop();
+      const sound = this.sounds[name];
+      if (sound && !sound.isPlaying() && !this._looped[sound]) {
+        sound.setVolume(1.0);
+        sound.loop();
+        this._looped[sound] = true;
       }
     }
   
     stop(name) {
-      if (this.sounds[name]) this.sounds[name].stop();
+      const sound = this.sounds[name];
+      if (sound) {
+        sound.stop();
+        if (this._looped[sound]) delete this._looped[sound];
+      }
     }
   
     setVolume(name, vol) {
-      if (this.sounds[name]) this.sounds[name].setVolume(vol);
+      if (this.sounds[name]) {
+        this.sounds[name].setVolume(vol);
+      }
     }
   
-    // ✅ 等載入好後再播放（play or loop）
+    // 🎵 主功能：確保載入後再播放（可 loop / play）
     playWhenReady(name, mode = "play", callback = null) {
-        const sound = this.sounds[name];
-      
-        if (!sound) {
-          console.warn(`⚠️ 音效 ${name} 尚未註冊於 sounds`);
-          return;
-        }
-      
-        // 防止重複播放
-        if (sound.isPlaying()) return;
-      
-        // 防止重複監聽
-        if (this._pendingCheck && this._pendingCheck[name]) return;
-      
-        // 已經載入就直接播放
-        if (sound.isLoaded()) {
-          console.log(`🎵 [立即播放] ${name} → ${mode}`);
-          this._playSound(sound, mode, callback);
-        } else {
-          console.log(`⏳ [等待音樂] ${name} 尚未載入，設置監聽...`);
-      
-          if (!this._pendingCheck) this._pendingCheck = {};
-          this._pendingCheck[name] = true;
-      
-          const checkLoaded = setInterval(() => {
-            if (sound.isLoaded()) {
-              clearInterval(checkLoaded);
-              delete this._pendingCheck[name];
-      
-              if (!sound.isPlaying()) {
-                console.log(`🎵 [延遲播放] ${name} 載入完成 → ${mode}`);
-                this._playSound(sound, mode, callback);
-              }
-            }
-          }, 100);
-        }
+      const sound = this.sounds[name];
+  
+      if (!sound) {
+        console.warn(`⚠️ 音效 ${name} 尚未註冊於 sounds`);
+        return;
       }
+  
+      // ✅ 僅對 loop 模式做播放一次保護
+      if (mode === "loop" && this._looped[sound]) return;
+  
+      if (this._pendingCheck[name]) return;
+  
+      if (sound.isLoaded()) {
+        console.log(`🎵 [立即播放] ${name} → ${mode}`);
+        this._playSound(sound, mode, callback);
+      } else {
+        console.log(`⏳ [等待音樂] ${name} 尚未載入，設置監聽...`);
+        this._pendingCheck[name] = true;
+  
+        const checkLoaded = setInterval(() => {
+          if (sound.isLoaded()) {
+            clearInterval(checkLoaded);
+            delete this._pendingCheck[name];
+  
+            if (mode === "play" || (mode === "loop" && !this._looped[sound])) {
+              console.log(`🎵 [延遲播放] ${name} 載入完成 → ${mode}`);
+              this._playSound(sound, mode, callback);
+            }
+          }
+        }, 100);
+      }
+    }
+  
+    // 🔧 真正播放邏輯：loop 一次，play 用 clone 疊加
+    _playSound(sound, mode, callback) {
+        sound.setVolume(1.0);
       
-      // 🔧 把 play / loop 撥放邏輯獨立成一個函數
-      _playSound(sound, mode, callback) {
-        if (mode === "loop") sound.loop();
-        else sound.play();
+        if (mode === "loop") {
+          if (!this._looped[sound]) {
+            sound.loop();
+            this._looped[sound] = true;
+          }
+        } else {
+          sound.play(); // ✅ 正常播放，不重複就好
+        }
       
         if (callback) callback();
       }
-      
-      
-      
-      
       
       
   }
