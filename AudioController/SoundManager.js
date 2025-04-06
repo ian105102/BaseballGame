@@ -34,7 +34,18 @@ export class SoundManager {
         "ScoreTheme.mp3",
         "Theme.mp3",
         "Waiting loop.mp3",
-        "Wrong.mp3"
+        "Wrong.mp3",
+        "一出局AI.mp3",
+        "一壘安打AI.mp3",
+        "三壘安打AI.mp3",
+        "三振出局AI.mp3",
+        "二壘安打AI.mp3",
+        "全壘打AI.mp3",
+        "兩出局AI.mp3",
+        "壞球AI.mp3",
+        "好球AI.mp3",
+        "安打AI.mp3",
+        "滾地球AI.mp3",
       ];
   
       for (const fileName of soundFiles) {
