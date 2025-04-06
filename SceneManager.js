@@ -59,7 +59,10 @@ export class SceneManager {
       })
       this.scenes.set(SceneEnum.SCORE, scorescene);
       //this.scenes.set(SceneEnum.MENU, new MenuScene());
+      
       this.currentScene = this.scenes.get(SceneEnum.MENU);
+      this.currentScene.OnStart();
+
       SceneManager.instance = this
 
     }
