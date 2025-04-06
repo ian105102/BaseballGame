@@ -181,8 +181,8 @@ export class TutorialScene extends IScene {
       correctionText = new DrawableText(this.p, "Arduino連接中...", 50);
     }
     this.remove(this.hintText);
-    correctionText.position.x = WIDTH / 2;
-    correctionText.position.y = HEIGHT*0.7;
+    correctionText.position.x = WIDTH / 2 -130;
+    correctionText.position.y = HEIGHT/2;
     correctionText.font = this.iansuiFont; // ✅ 套用 Iansui 字體
     this.add(correctionText);
     this.hintText = correctionText;

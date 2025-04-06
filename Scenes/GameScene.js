@@ -261,29 +261,41 @@ export class GameScene extends IScene{
         this.swingSpeed[0] = ReceiveArduino.acceleration[0] - ReceiveArduino.correctionAcceleration[0];
         this.swingSpeed[1] = ReceiveArduino.acceleration[1] - ReceiveArduino.correctionAcceleration[1];
         this.swingSpeed[2] = ReceiveArduino.acceleration[2] - ReceiveArduino.correctionAcceleration[2];
+
+        
         console.log("swingSpeed: ", this.swingSpeed);
+
+        this.swingSpeed = [
+            ReceiveArduino.acceleration[0] - ReceiveArduino.correctionAcceleration[0],
+            ReceiveArduino.acceleration[1] - ReceiveArduino.correctionAcceleration[1],
+            ReceiveArduino.acceleration[2] - ReceiveArduino.correctionAcceleration[2]
+        ];
+        
+        // 計算三軸加速度的向量大小
+        const swingMagnitude = Math.sqrt(
+            Math.pow(this.swingSpeed[0], 2) +
+            Math.pow(this.swingSpeed[1], 2) +
+            Math.pow(this.swingSpeed[2], 2)
+        );
         
         // 旋轉 bat
         this.bat.rotateEuler(ReceiveArduino.euler[2] - ReceiveArduino.correctionEuler[2], // 水平
                             ReceiveArduino.euler[0] - ReceiveArduino.correctionEuler[0], // 垂直旋轉 -1
                             ReceiveArduino.euler[1] - ReceiveArduino.correctionEuler[1]); // 畫大圓 -1
         // this.bat.rotateQuaternion(ReceiveArduino.quat[0], ReceiveArduino.quat[1], ReceiveArduino.quat[2], ReceiveArduino.quat[3]);
-       
-    
-      
+
         this.bat.setPosition(this.Player.hands.getrelLeft().x, this.Player.hands.getrelLeft().y);
-       
-        this.Player.hands.setLeftHandPosition(50, 50);
-        this.Player.hands.setRightHandPosition(-50, 50);
+
+
         let handPositions = this.poseTracker.getHandToShoulderDistances();
         this.Player.hands.setLeftHandPosition(handPositions.leftHand.x * 400,handPositions.leftHand.y * 400);
         this.Player.hands.setRightHandPosition(handPositions.rightHand.x * 400, handPositions.rightHand.y * 400);
     
 
-       
+
         this.ballCurveEffect.update(delta);
 
-       
+
 
 
         this.GameFlow.update(delta);
