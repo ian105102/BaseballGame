@@ -41,6 +41,8 @@ const main_sketch = (p)=>{
       
         p.window_width = WIDTH
         p.window_height = HEIGHT
+
+        p.frameRate(60); // 設定為每秒 60 幀
      
         // 確認資源加載完成後在執行遊戲
         // 把preload assets傳入Scene

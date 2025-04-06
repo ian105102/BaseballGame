@@ -107,6 +107,7 @@ void MPU(){
         mpu.dmpGetAccel(&aa, FIFOBuffer);
         mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
         // /* Display Quaternion values in easy matrix form: [w, x, y, z] */
+        Serial.println(mpu.testConnection());
         Serial.println("quat:" +
                       String(q.w) +
                       "," + 
@@ -118,11 +119,11 @@ void MPU(){
 
         // /* Display Euler angles in degrees */
         Serial.println("euler:" + 
-                      String(euler[0] * 180/M_PI) +
+                      String(euler[0]) +
                       "," + 
-                      String(euler[1] * 180/M_PI) +
+                      String(euler[1]) +
                       "," + 
-                      String(euler[2] * 180/M_PI));
+                      String(euler[2]));
         
         // /* Display real acceleration, adjusted to remove gravity */
         Serial.println("acceleration:" +
