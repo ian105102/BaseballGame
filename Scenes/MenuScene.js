@@ -114,8 +114,21 @@ export class MenuScene extends IScene {
     this.add(goTutorialButton);
 
     for (let i = 0; i < this.balloonsNum; i++) {
+
+      let leftMin = 0;
+      let leftMax = WIDTH / 2 - 200;
+      let rightMin = WIDTH / 2 +200;
+      let rightMax = WIDTH;
+    
+      let x;
+      if (this.p.random() < 0.5) {
+        x = this.p.random(leftMin, leftMax); // 左邊
+      } else {
+        x = this.p.random(rightMin, rightMax); // 右邊
+      }
+    
       this.balloons.push({
-        x: this.p.random(0, this.ballBtn.x - this.ballBtn.w / 2 - 10),
+        x: x,
         y: this.p.random(HEIGHT, HEIGHT + 200),
         speed: this.p.random(0.5, 1.5),
         color: this.p.random(['#00f0ff', 
@@ -177,7 +190,15 @@ export class MenuScene extends IScene {
       balloon.y -= balloon.speed;
       if (balloon.y < -50) {
         balloon.y = HEIGHT + this.p.random(0, 100);
-        balloon.x = this.p.random(0, this.ballBtn.x - this.ballBtn.w / 2 - 10);
+        let leftRange = [0, WIDTH/2-200];
+        let rightRange = [WIDTH / 2 + 200 , this.p.width];
+        
+        // 隨機決定要出現在左邊或右邊
+        if (this.p.random() < 0.5) {
+          balloon.x = this.p.random(leftRange[0], leftRange[1]);
+        } else {
+          balloon.x = this.p.random(rightRange[0], rightRange[1]);
+        }
       }
     }
   }
@@ -186,7 +207,17 @@ export class MenuScene extends IScene {
     const p = this.p;
 
     if (p.frameCount % 30 === 0) {
-      const x = p.random(this.gloveBtn.x + this.gloveBtn.w / 2 + 10, WIDTH);
+      const leftMin = 0;
+      const leftMax =  WIDTH/2-200 ;
+      const rightMin =  WIDTH/2+200;
+      const rightMax = WIDTH;
+
+      let x;
+      if (p.random() < 0.5) {
+        x = p.random(leftMin, leftMax); // 左邊範圍
+      } else {
+        x = p.random(rightMin, rightMax); // 右邊範圍
+      }
       this.fireworks.push(new Firework(p, x, HEIGHT));
     }
 
