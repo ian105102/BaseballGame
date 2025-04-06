@@ -188,7 +188,7 @@ export class MenuScene extends IScene {
       if (this.isMouseOver(this.ballImg, this.ballBtn)) {
         this.playing = true;
         ReceiveArduino.connect();
-        SceneManager.instance.changeScene(SceneEnum.INIT_POSE);
+        SceneManager.instance.changeScene(SceneEnum.GAME);
       } else if (this.isMouseOver(this.gloveImg, this.gloveBtn)) {
         SceneManager.instance.changeScene(SceneEnum.TUTORIAL);
       }

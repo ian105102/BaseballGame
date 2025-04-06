@@ -12,7 +12,7 @@ import { Bat } from "../Objects/DrawableObj/Game/Bat.js"
 import { Hitbox3Ditem } from "../Objects/DrawableObj/Game/Hitbox3Ditem.js"
 import { AssetLoader } from "../AssetLoader.js"
 import { Character } from "../Objects/DrawableObj/Unit/CharacterObj.js"
-import poseTracker from '../detection.js';
+
 import { CurveMoveEffect } from "../Objects/Utils/CurveMoveEffect.js"
 import { Baseball } from "../Objects/DrawableObj/Ball/Baseball.js"
 import { GameCountdown } from "../State/Game/GameCountdown.js"
@@ -29,6 +29,8 @@ import { HitPointUi } from "../Objects/DrawableObj/ui/HitPointUi.js"
 import ReceiveArduino from "../ArduinoConnectJS.js"
 import { DrawableBorderText } from "../Objects/DrawableObj/Text/DrawableBorderText.js"
 
+import {PoseTracker} from "../PoseTracker.js"
+
 
 export class GameScene extends IScene{
     static instance = null
@@ -42,8 +44,9 @@ export class GameScene extends IScene{
         this.gameCanva = document.querySelector(".GameCanvas");
     
 
-        this.video;
-    
+        this.poseTracker = PoseTracker.getInstance(this.p);
+        this.poseTracker.needVideo = true;
+        
         this.World = Matter.World.create({ gravity: { x: 0, y: 0 } });
         this.engine = Matter.Engine.create({ gravity: { x: 0, y: 0 } });
         this.batModel = p.loadModel('./Asset/3dObject/BaseballBat.obj',true);
@@ -85,28 +88,10 @@ export class GameScene extends IScene{
         instance.add(this.Backimage);
 
 
-        this.needVideo = true;
-        this.video = this.p.createCapture(this.p.VIDEO)
-        .size(WIDTH, HEIGHT)
-        .hide();
-        this.flippedGraphics = this.p.createGraphics(WIDTH, HEIGHT);
-        this.myCamera = new Camera(this.video.elt, {
-            onFrame: async () => {
-                if (!this.needVideo) return;
-        
-                // 將翻轉後的影像畫到離屏畫布
-                this.flippedGraphics.push();
-                this.flippedGraphics.translate(WIDTH, 0);   // 移動到畫布右邊
-                this.flippedGraphics.scale(-1, 1);          // 水平翻轉
-                this.flippedGraphics.image(this.video, 0, 0, WIDTH, HEIGHT);
-                this.flippedGraphics.pop();
-        
-                // 把鏡像後的畫面傳送給 poseTracker
-                await poseTracker.send(this.flippedGraphics.canvas);
-            },
-            width: 1080,
-            height: 720
-        }).start();
+
+  
+
+
 
         
         this.strikeZoneUi = new StrikeZoneUi(this.p );
@@ -233,6 +218,7 @@ export class GameScene extends IScene{
         this.videoImage = new BackImage(this.p, this.backgroundimg);
         this.videoImage.size.set(270, 180);
         this.videoImage.isMirror = true; // 鏡像處理
+        this.videoImage.img = this.poseTracker.video;
         this.videoImage.position.set(WIDTH - 290/2, HEIGHT - 200/2);
       
         instance.add(this.videoImage);
@@ -296,7 +282,7 @@ export class GameScene extends IScene{
        
         this.Player.hands.setLeftHandPosition(50, 50);
         this.Player.hands.setRightHandPosition(-50, 50);
-        let handPositions = poseTracker.getHandToShoulderDistances();
+        let handPositions = this.poseTracker.getHandToShoulderDistances();
         this.Player.hands.setLeftHandPosition(handPositions.leftHand.x * 400,handPositions.leftHand.y * 400);
         this.Player.hands.setRightHandPosition(handPositions.rightHand.x * 400, handPositions.rightHand.y * 400);
     
@@ -304,14 +290,14 @@ export class GameScene extends IScene{
        
         this.ballCurveEffect.update(delta);
 
-        this.videoImage.img = this.video;
+       
 
 
         this.GameFlow.update(delta);
         this.GeneratorManager.update();
     }
     OnStop(){
-        this.needVideo = false;
+        this.poseTracker.needVideo = false;
         this.GeneratorManager.clearAll();
         this.changeState(new GameNone(GameScene.instance));
 

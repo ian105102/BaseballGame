@@ -7,6 +7,8 @@ import { HEIGHT } from "../G.js";
 import { RectButton } from "../Objects/DrawableObj/Button/RectButton.js";
 import { DrawableText } from "../Objects/DrawableObj/Text/DrawableText.js";
 import { SoundManager } from "../AudioController/SoundManager.js";
+import { PoseTracker } from "../PoseTracker.js";
+
 
 export class TutorialScene extends IScene {
   static instance = null;
@@ -25,7 +27,8 @@ export class TutorialScene extends IScene {
     if (TutorialScene.instance) return TutorialScene.instance;
     super(p);
     this.needVideo = true;
-    this.video;
+
+    this.video = PoseTracker.getInstance(this.p).video;
     this.myCamera;
     this.textObjects = [];
     this.maskHoverOffset = 0;
@@ -63,14 +66,7 @@ export class TutorialScene extends IScene {
     const p = this.p;
     this.ribbons = [];
     this.ribbonColors = ['#e63946', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
-    this.video = p.createCapture(p.VIDEO).size(WIDTH, HEIGHT).hide();
-    this.myCamera = new Camera(this.video.elt, {
-      onFrame: async () => {
-        if (!this.needVideo) return;
-      },
-      width: WIDTH,
-      height: HEIGHT,
-    }).start();
+
   }
 
   draw() {
