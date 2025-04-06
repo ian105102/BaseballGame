@@ -37,7 +37,7 @@ export class TutorialScene extends IScene {
     this.maskHoverOffset = 0;
     this.backHoverOffset = 0;
     
-    this.soundManager = new SoundManager(p); // 只建立一次
+    this.soundManager = new SoundManager(p); 
     this.soundManager.loadSounds(); 
     TutorialScene.instance = this;
     this.init();
@@ -47,7 +47,7 @@ export class TutorialScene extends IScene {
     const p = this.p;
     if (this.jfFont) {
       let title = new DrawableText(p, "教學介面", 50, this.jfFont);
-      title.position.x = 80;
+      title.position.x = 10 ;
       title.position.y = HEIGHT / 9;
       title.strokeWeight = 4;
       title.strokeColor = p.color(255);
@@ -59,7 +59,7 @@ export class TutorialScene extends IScene {
         28,
         this.jfFont
       );
-      rule.position.x = WIDTH / 2 - 150;
+      rule.position.x = WIDTH / 2 - 200;
       rule.position.y = HEIGHT / 2 + 80;
       rule.strokeWeight = 3;
       rule.strokeColor = p.color(255);
@@ -106,12 +106,12 @@ export class TutorialScene extends IScene {
 
     const tvWidth = 512;
     const tvHeight = 512;
-    const tvX = (WIDTH - tvWidth) / 2 ;
+    const tvX = (WIDTH - tvWidth) / 2 - 100;
     const tvY = -40;
 
-    const batterX = tvX - 260;
+    const batterX = tvX - 200;
     const batterY = tvY + 145;
-    const maskX = tvX + 500;
+    const maskX = tvX + 520;
     const maskY = tvY + 400 + this.maskHoverOffset;
 
     p.image(this.tv, tvX, tvY, tvWidth, tvHeight);
@@ -160,13 +160,12 @@ export class TutorialScene extends IScene {
         ReceiveArduino.correctionQurt = ReceiveArduino.quat;
         ReceiveArduino.correctionEuler = ReceiveArduino.euler;
         ReceiveArduino.correctionAcceleration = ReceiveArduino.acceleration;
-        text = new DrawableText(this.p, "完成校正！", 50);
+        text = new DrawableText(this.p, "完成校正！", 50,this.jfFont);
       } else {
-        text = new DrawableText(this.p, "校正倒數：" + String(this.correctionTime/60), 40);
+        text = new DrawableText(this.p, "校正倒數：" + String(this.correctionTime/60), 40,this.jfFont);
       }
-      text.position.x = WIDTH / 2;
-      text.position.y = HEIGHT / 2;
-      text.font = this.iansuiFont; // ✅ 套用 Iansui 字體
+      text.position.x = WIDTH - 400;
+      text.position.y = 200;
       this.add(text);
       // 記住這個文字
       this.countdownText = text;
@@ -176,13 +175,13 @@ export class TutorialScene extends IScene {
     let correctionText;
     if(ReceiveArduino.arduinoConnected){
       this.correctionTime--;
-      correctionText = new DrawableText(this.p, "將球棒直立以校正角度\n並請勿大幅度晃動", 50);
+      correctionText = new DrawableText(this.p, "將球棒直立以校正角度\n並請勿大幅度晃動", 50,this.jfFont);
     } else {
-      correctionText = new DrawableText(this.p, "Arduino連接中...", 50);
+      correctionText = new DrawableText(this.p, "Arduino連接中...", 50,this.jfFont);
     }
     this.remove(this.hintText);
-    correctionText.position.x = WIDTH / 2 -130;
-    correctionText.position.y = HEIGHT/2;
+    correctionText.position.x = WIDTH -400;
+    correctionText.position.y = 200;
     correctionText.font = this.iansuiFont; // ✅ 套用 Iansui 字體
     this.add(correctionText);
     this.hintText = correctionText;
@@ -206,14 +205,13 @@ export class TutorialScene extends IScene {
 
   mousePressed() {
     if (this.isMouseOverMask()) {
-      this.soundManager.playWhenReady("catch ball3", "play");
+      this.soundManager.playWhenReady("button2", "play");
       SceneManager.instance.changeScene(SceneEnum.MENU);
     }
   }
 
   OnStop() { this.needVideo = false; }
   OnStart() { 
-    this.needVideo = true;
   }
 
   updateRibbons() {

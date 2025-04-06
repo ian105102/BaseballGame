@@ -27,9 +27,11 @@ export class SoundManager {
         "Correct.mp3",
         "Crowd Ambient.mp3",
         "Crowd Cheer.mp3",
+        "EffectEnd.mp3",
         "hit1.mp3",
         "hit2.mp3",
         "hit3.mp3",
+        "ScoreTheme.mp3",
         "Theme.mp3",
         "Waiting loop.mp3",
         "Wrong.mp3"
@@ -76,29 +78,30 @@ export class SoundManager {
     // 🎵 主功能：確保載入後再播放（可 loop / play）
     playWhenReady(name, mode = "play", callback = null) {
       const sound = this.sounds[name];
-  
+    
       if (!sound) {
         console.warn(`⚠️ 音效 ${name} 尚未註冊於 sounds`);
         return;
       }
-  
-      // ✅ 僅對 loop 模式做播放一次保護
+    
+      // ✅ loop 播過就不重複播
       if (mode === "loop" && this._looped[sound]) return;
-  
+    
+      // ✅ 防止同一音效重複設監聽
       if (this._pendingCheck[name]) return;
-  
+    
       if (sound.isLoaded()) {
         console.log(`🎵 [立即播放] ${name} → ${mode}`);
         this._playSound(sound, mode, callback);
       } else {
         console.log(`⏳ [等待音樂] ${name} 尚未載入，設置監聽...`);
         this._pendingCheck[name] = true;
-  
+    
         const checkLoaded = setInterval(() => {
           if (sound.isLoaded()) {
             clearInterval(checkLoaded);
             delete this._pendingCheck[name];
-  
+    
             if (mode === "play" || (mode === "loop" && !this._looped[sound])) {
               console.log(`🎵 [延遲播放] ${name} 載入完成 → ${mode}`);
               this._playSound(sound, mode, callback);
@@ -107,22 +110,30 @@ export class SoundManager {
         }, 100);
       }
     }
+    
   
     // 🔧 真正播放邏輯：loop 一次，play 用 clone 疊加
     _playSound(sound, mode, callback) {
-        sound.setVolume(1.0);
-      
-        if (mode === "loop") {
-          if (!this._looped[sound]) {
-            sound.loop();
-            this._looped[sound] = true;
-          }
-        } else {
-          sound.play(); // ✅ 正常播放，不重複就好
+      sound.setVolume(1.0);
+    
+      if (mode === "loop") {
+        if (!this._looped[sound]) {
+          sound.loop();
+          this._looped[sound] = true;
         }
-      
-        if (callback) callback();
+        // 🔁 loop 模式通常不會呼叫 callback（你也可以自己決定）
+        if (callback) callback(); // 若你想在 loop 開始時就呼叫 callback
+      } else {
+        sound.play();
+        if (callback) {
+          // 🎯 播放結束後才 callback
+          sound.onended(() => {
+            callback();
+          });
+        }
       }
+    }
+    
       
       
   }

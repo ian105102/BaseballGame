@@ -7,8 +7,12 @@ import { SceneManager } from "../SceneManager.js";
 import { WIDTH } from "../G.js";
 import { HEIGHT } from "../G.js";
 import { DrawableText } from "../Objects/DrawableObj/Text/DrawableText.js";
+
 import { GameScene } from "./GameScene.js";
 import { DrawableBorderText } from "../Objects/DrawableObj/Text/DrawableBorderText.js";
+
+=======
+import { SoundManager } from "../AudioController/SoundManager.js";
 
 export class ScoreScene extends IScene {
   static instance = null;
@@ -31,6 +35,7 @@ export class ScoreScene extends IScene {
     this.ballMoveX = 0;
     this.ballMoveXDir = 1;
 
+
     this.ScoreText = new DrawableBorderText(this.p, "分數", 100 , this.jfFont ," #000000", "#FFFFFF" ,10);
     this.ScoreText.position.x = WIDTH / 2-50;
     this.ScoreText.position.y = HEIGHT / 2;
@@ -38,6 +43,10 @@ export class ScoreScene extends IScene {
     this.ScoreText.strokeWeight = 4;
 
     ScoreScene.instance.add(this.ScoreText);
+
+
+    this.soundManager = new SoundManager(p);
+    this.soundManager.loadSounds(); 
 
     ScoreScene.instance.init();
   }
@@ -144,7 +153,19 @@ export class ScoreScene extends IScene {
 
   mousePressed() {
     if (this.isMouseOver(this.images.home, this.homeBtn)) {
+      this.soundManager.playWhenReady("Correct", "play");
       SceneManager.instance.changeScene(SceneEnum.MENU);
     }
+  }
+  OnStart() { 
+    this.soundManager.stop("Theme");
+    this.soundManager.playWhenReady("EffectEnd", "play", () => {
+      this.soundManager.playWhenReady("ScoreTheme", "loop");
+    });
+    
+  }
+  OnStop() {
+    this.soundManager.stop("EffectEnd");
+    this.soundManager.stop("ScoreTheme");
   }
 }
