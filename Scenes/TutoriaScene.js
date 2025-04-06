@@ -165,7 +165,7 @@ export class TutorialScene extends IScene {
         text = new DrawableText(this.p, "校正倒數：" + String(this.correctionTime/60), 40,this.jfFont);
       }
       text.position.x = WIDTH - 400;
-      text.position.y = 150;
+      text.position.y = 200;
       this.add(text);
       // 記住這個文字
       this.countdownText = text;
@@ -180,8 +180,8 @@ export class TutorialScene extends IScene {
       correctionText = new DrawableText(this.p, "Arduino連接中...", 50,this.jfFont);
     }
     this.remove(this.hintText);
-    correctionText.position.x = WIDTH / 2 -130;
-    correctionText.position.y = HEIGHT/2;
+    correctionText.position.x = WIDTH -400;
+    correctionText.position.y = 200;
     correctionText.font = this.iansuiFont; // ✅ 套用 Iansui 字體
     this.add(correctionText);
     this.hintText = correctionText;
@@ -205,14 +205,13 @@ export class TutorialScene extends IScene {
 
   mousePressed() {
     if (this.isMouseOverMask()) {
-      this.soundManager.playWhenReady("catch ball3", "play");
+      this.soundManager.playWhenReady("button2", "play");
       SceneManager.instance.changeScene(SceneEnum.MENU);
     }
   }
 
   OnStop() { this.needVideo = false; }
   OnStart() { 
-    this.needVideo = true;
   }
 
   updateRibbons() {
