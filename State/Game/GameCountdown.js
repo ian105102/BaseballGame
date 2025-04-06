@@ -14,10 +14,14 @@ export class GameCountdown extends GameFlowBase {
     }
     *countdown() {
         console.log("倒數開始...");
+        this.system.soundManager.playWhenReady("button2", "play");
         for (let i = 3; i > 0; i--) {
           console.log(i);
           this.system.countdownText.text = i.toString(); 
+        
           yield* this.timer.delay(1000); 
+          this.system.soundManager.playWhenReady("button2", "play");
+
         }
       
         this.system.countdownText.isActive = false;

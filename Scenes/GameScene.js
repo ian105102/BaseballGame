@@ -278,7 +278,7 @@ export class GameScene extends IScene{
         ];
         
         // 計算三軸加速度的向量大小
-        const swingMagnitude = Math.sqrt(
+        this.swingMagnitude = Math.sqrt(
             Math.pow(10000000, 2) +
             Math.pow(10000000, 2) +
             Math.pow(10000000, 2)

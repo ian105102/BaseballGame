@@ -134,7 +134,7 @@ export class GameHitBall extends GameFlowBase {
     }
 
     RandomPoint(batSpeed , hitpoint ,size ){
-
+        console.log("batSpeed", batSpeed);
         let randomPoints = [];
         let type = BaseballPlay.HOME_RUN;
         let endSize = 0;
@@ -200,7 +200,7 @@ export class GameHitBall extends GameFlowBase {
 
     HitBaseball(hitPoint , size ,startVelocity ){  
 
-        this.system.soundManager.playWhenReady("hit1", "play");
+       
         let randomPoints = this.RandomPoint(this.system.swingMagnitude, hitPoint , size); // 這裡輸入從arduino接收的速度
         this.CalculateScore();
         this.midPoint = {
@@ -229,16 +229,17 @@ export class GameHitBall extends GameFlowBase {
                 this._onHitTheBall();
             }
             ,
-            startVelocity+randomPoints.speed/5000,
+            startVelocity+(Math.min(randomPoints.speed,10000)/7000000),
             0
         ); 
     }
     _onHitTheBall(){
-     
+        this.system.soundManager.playWhenReady("hit1", "play");
         this.system.baseball.isActive = false;
         this.system.GeneratorManager.start(this.next());
     }
     _onSkipTheBall(){
+        this.system.soundManager.playWhenReady("catch ball1", "play");
         this.CalculateScore();
         this.system.baseball.isActive = false;
         this.system.GeneratorManager.start(this.next());
