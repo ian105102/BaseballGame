@@ -46,7 +46,6 @@ export class GameScene extends IScene{
     
 
         this.poseTracker = PoseTracker.getInstance(this.p);
-        this.poseTracker.needVideo = true;
         
         this.World = Matter.World.create({ gravity: { x: 0, y: 0 } });
         this.engine = Matter.Engine.create({ gravity: { x: 0, y: 0 } });
@@ -243,7 +242,7 @@ export class GameScene extends IScene{
     OnStart(){
      
         this.changeState(new GameCountdown(GameScene.instance) );
-        this.needVideo = true;
+        this.poseTracker.needVideo = true;
         this.strikePoint = 0;
         this.ballPoint = 0;
         this.outPoint = 0;
@@ -261,7 +260,7 @@ export class GameScene extends IScene{
         Matter.Engine.update(this.engine);
         
         // console.log("euler: ", ReceiveArduino.correctionEuler[2], ", ", ReceiveArduino.correctionEuler[0], ", ", ReceiveArduino.correctionEuler[1]);
-        // console.log("euler: ", ReceiveArduino.euler[2], ", ", ReceiveArduino.euler[0], ", ", ReceiveArduino.euler[1]);
+        console.log("euler: ", ReceiveArduino.euler[1], ", ", ReceiveArduino.euler[2], ", ", ReceiveArduino.euler[2]);
         
         // 獲得揮棒速度，最大值[16,384, 16,384, 16,384]和[-16,384, -16,384, -16,384]，+-為方向
         this.swingSpeed[0] = ReceiveArduino.acceleration[0] - ReceiveArduino.correctionAcceleration[0];
@@ -284,9 +283,13 @@ export class GameScene extends IScene{
         );
         
         // 旋轉 bat
-        this.bat.rotateEuler(ReceiveArduino.euler[2] - ReceiveArduino.correctionEuler[2], // 水平
-                            ReceiveArduino.euler[0] - ReceiveArduino.correctionEuler[0], // 垂直旋轉 -1
-                            ReceiveArduino.euler[1] - ReceiveArduino.correctionEuler[1]); // 畫大圓 -1
+                            
+        // this.bat.rotateEuler(-1*(ReceiveArduino.euler[0] - ReceiveArduino.correctionEuler[0]), // 水平
+        //                     ReceiveArduino.euler[2] - ReceiveArduino.correctionEuler[2], // 垂直旋轉 -1  0
+        //                     -1*(ReceiveArduino.euler[1] - ReceiveArduino.correctionEuler[1])+this.p.PI); // 畫大圓 -1   2
+        this.bat.rotateEuler(-1*(ReceiveArduino.euler[0]), // 水平
+                            ReceiveArduino.euler[2], // 垂直旋轉 -1  0
+                            -1*ReceiveArduino.euler[1]+this.p.PI); // 畫大圓 -1   2
         // this.bat.rotateQuaternion(ReceiveArduino.quat[0], ReceiveArduino.quat[1], ReceiveArduino.quat[2], ReceiveArduino.quat[3]);
 
         this.bat.setPosition(this.Player.hands.getrelLeft().x, this.Player.hands.getrelLeft().y);
@@ -296,7 +299,7 @@ export class GameScene extends IScene{
         this.Player.hands.setLeftHandPosition(handPositions.leftHand.x * 400,handPositions.leftHand.y * 400);
         this.Player.hands.setRightHandPosition(handPositions.rightHand.x * 400, handPositions.rightHand.y * 400);
     
-
+        // console.log("handPositions: ", handPositions);
 
         this.ballCurveEffect.update(delta);
 

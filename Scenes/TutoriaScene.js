@@ -165,7 +165,7 @@ export class TutorialScene extends IScene {
         text = new DrawableText(this.p, "校正倒數：" + String(this.correctionTime/60), 40,this.jfFont);
       }
       text.position.x = WIDTH - 400;
-      text.position.y = 200;
+      text.position.y = 100;
       this.add(text);
       // 記住這個文字
       this.countdownText = text;

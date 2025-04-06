@@ -39,7 +39,6 @@ export class PoseTracker {
       onFrame: async () => {
           if (!this.needVideo) return;
   
-         
           this.flippedGraphics.push();
           this.flippedGraphics.translate(this.width, 0); 
           this.flippedGraphics.scale(-1, 1);         
