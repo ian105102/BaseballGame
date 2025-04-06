@@ -200,7 +200,7 @@ export class GameHitBall extends GameFlowBase {
 
     HitBaseball(hitPoint , size ,startVelocity ){  
 
-
+        this.system.soundManager.playWhenReady("hit1", "play");
         let randomPoints = this.RandomPoint(this.system.swingMagnitude, hitPoint , size); // 這裡輸入從arduino接收的速度
         this.CalculateScore();
         this.midPoint = {
@@ -251,6 +251,7 @@ export class GameHitBall extends GameFlowBase {
             return; 
         }
         if(ballType == BaseballPlay.HOME_RUN){
+            this.system.soundManager.playWhenReady("Crowd Cheer", "play");
             this.system.ResultShowtext.text = "全壘打!";
             this.system.point +=3;
             return; 

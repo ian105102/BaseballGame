@@ -30,6 +30,7 @@ import ReceiveArduino from "../ArduinoConnectJS.js"
 import { DrawableBorderText } from "../Objects/DrawableObj/Text/DrawableBorderText.js"
 
 import {PoseTracker} from "../PoseTracker.js"
+import { SoundManager } from "../AudioController/SoundManager.js"
 
 
 export class GameScene extends IScene{
@@ -53,6 +54,11 @@ export class GameScene extends IScene{
         this.backgroundimg = p.loadImage('../Asset/img/gamebg.png');
         this.baseballimg = p.loadImage('../Asset/img/baseBall.png');
         this.GeneratorManager = new GeneratorManager();
+        this.Font = p.loadFont('../Font/jf-openhuninn-2.1.ttf');
+        this.hitSound = p.loadSound('../music/hit1.mp3');
+        this.soundManager = new SoundManager(p); 
+        this.soundManager.loadSounds();
+      
 
         GameScene.instance = this;
         GameScene.instance.init()
@@ -191,7 +197,7 @@ export class GameScene extends IScene{
 
 
         this.scoreboard = new ScoreboardUi(this.p );
-        this.scoreboard.textFont = "ZCOOL KuaiLe";
+        this.scoreboard.textFont = this.Font;
         this.scoreboard.position.x = 0;
         this.scoreboard.position.y = 0;
         instance.add(this.scoreboard);
@@ -200,7 +206,7 @@ export class GameScene extends IScene{
 
 
 
-        this.ResultShowtext = new DrawableBorderText(this.p,"",150 , "ZCOOL KuaiLe" , "rgb(255, 255, 255)" , "rgb(0, 0, 0)" );
+        this.ResultShowtext = new DrawableBorderText(this.p,"",150 , this.Font , "rgb(255, 255, 255)" , "rgb(0, 0, 0)" );
         this.ResultShowtext.strokeWeight = 20;
         this.ResultShowtext.position.x = WIDTH / 2;
         this.ResultShowtext.position.y = HEIGHT / 2;
@@ -208,7 +214,7 @@ export class GameScene extends IScene{
         this.ResultShowtext.isActive = false;
 
 
-        this.countdownText = new DrawableBorderText(this.p,"0",150 , "ZCOOL KuaiLe", "rgb(255, 255, 255)" , "rgb(0, 0, 0)" );
+        this.countdownText = new DrawableBorderText(this.p,"0",150 ,this.Font, "rgb(255, 255, 255)" , "rgb(0, 0, 0)" );
         this.countdownText.strokeWeight = 20;
         this.countdownText.position.x = WIDTH / 2
         this.countdownText.position.y = HEIGHT / 2;
@@ -273,9 +279,9 @@ export class GameScene extends IScene{
         
         // 計算三軸加速度的向量大小
         const swingMagnitude = Math.sqrt(
-            Math.pow(this.swingSpeed[0], 2) +
-            Math.pow(this.swingSpeed[1], 2) +
-            Math.pow(this.swingSpeed[2], 2)
+            Math.pow(10000000, 2) +
+            Math.pow(10000000, 2) +
+            Math.pow(10000000, 2)
         );
         
         // 旋轉 bat
