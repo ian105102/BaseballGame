@@ -197,7 +197,7 @@ export class MenuScene extends IScene {
       } else if (this.isMouseOver(this.gloveImg, this.gloveBtn)) {
         ReceiveArduino.connect();
         SceneManager.instance.changeScene(SceneEnum.TUTORIAL );
-        this.soundManager.playWhenReady("一出局AI", "play");
+        this.soundManager.playWhenReady("button1", "play");
       }
     }
   }
