@@ -26,9 +26,17 @@ const main_sketch = (p)=>{
         assets.tv = p.loadImage("static/TV.png");
         assets.batter = p.loadImage("static/batter.png");
         assets.mask = p.loadImage("static/mask.png");
+        assets.jfFont = p.loadFont("Font/jf-openhuninn-2.1.ttf");
+        assets.BGResult = p.loadImage("static/BGResult.png");
+        assets.trophy = p.loadImage("static/trophy.png");
+        assets.bat = p.loadImage("static/bat.png");
+        assets.pinkCap = p.loadImage("static/pinkCap.png");
+        assets.home = p.loadImage("static/home.png");
+        assets.joystick = p.loadImage("static/joystick.png");
+        assets.mvp = p.loadImage("static/MVP.png");
+        assets.Baseball = p.loadImage("static/Baseball.png")
 
-      
-
+    
         p.is_left_pressing = false
         p.is_right_pressing = false
 

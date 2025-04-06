@@ -24,20 +24,34 @@ export class SceneManager {
         gloveImg: assets.gloveImg
       });
       this.scenes.set(SceneEnum.MENU, menuScene);
-      const tutorialscene = new TutorialScene(p)
+      const tutorialscene = new TutorialScene(p);
       tutorialscene.setImages({
         bgGrass: assets.bgGrass,
         tv:assets.tv,
         batter:assets.batter,
         mask:assets.mask,
+        jfFont:assets.jfFont,
       });
+
       this.scenes.set(SceneEnum.TUTORIAL, tutorialscene);
       const gameScene = new GameScene(p);
       gameScene.setImages({
         playball: assets.playball
       });
       this.scenes.set(SceneEnum.GAME, gameScene);
-      this.scenes.set(SceneEnum.SCORE, new ScoreScene(p));
+      const scorescene = new ScoreScene(p);
+      scorescene.setImages({
+        BGResult:assets.BGResult,
+        bat:assets.bat,
+        pinkCap:assets.pinkCap,
+        trophy:assets.trophy,
+        home:assets.home,
+        joystick:assets.joystick,
+        mvp:assets.mvp,
+        jfFont:assets.jfFont,
+        Baseball:assets.Baseball,
+      })
+      this.scenes.set(SceneEnum.SCORE, scorescene);
       //this.scenes.set(SceneEnum.MENU, new MenuScene());
       this.currentScene = this.scenes.get(SceneEnum.MENU);
       SceneManager.instance = this

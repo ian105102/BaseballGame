@@ -74,12 +74,14 @@ export class GameHitBall extends GameFlowBase {
             this.StrikeZonePoint.x + randomX / 2,
             this.StrikeZonePoint.y + randomY 
         );
+       
         this.system.hitPointUi.isActive = true;
         // 判斷是否為壞球
         this.isBadBall = !this.rectangleCollishion.checkCollisionWithCircle(
             this.circleCollishion
         );
-
+        this.randomRoatation = this.system.p.random(0, 360);
+     
 
         ballCurveEffect.do(
             [
@@ -121,11 +123,12 @@ export class GameHitBall extends GameFlowBase {
             this.system.GeneratorManager.start(this.ScreenShake());
         }
         
+
         if (checkSwing ) {  //之後要加上速度判斷
             this.isSwingbat = true;
           
         }
-        
+        baseball.rotation = t*this.randomRoatation;
         baseball.position.set(x, y);
         baseball.scale.set(0.1 + t * 1.2, 0.1 + t * 1.2);
     }
@@ -205,7 +208,7 @@ export class GameHitBall extends GameFlowBase {
             y: this.system.baseball.position.y
         }
     
-     
+        this.randomRoatation = this.system.p.random(0, 360);
      
         this.system.ballCurveEffect.do(
             randomPoints.randomPoints,
@@ -217,6 +220,8 @@ export class GameHitBall extends GameFlowBase {
                 let remap = this.system.p.map(t, 0, 1, size, randomPoints.endSize);
                 this.system.baseball.scale.x = remap;
                 this.system.baseball.scale.y =  remap;
+
+                this.system.baseball.rotation = t*this.randomRoatation;
             
             },
             ()=>{
