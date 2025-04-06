@@ -11,7 +11,7 @@ import { DrawableText } from "../Objects/DrawableObj/Text/DrawableText.js";
 import { GameScene } from "./GameScene.js";
 import { DrawableBorderText } from "../Objects/DrawableObj/Text/DrawableBorderText.js";
 
-=======
+
 import { SoundManager } from "../AudioController/SoundManager.js";
 
 export class ScoreScene extends IScene {
