@@ -244,7 +244,7 @@ export class GameScene extends IScene{
         this.point = 0;
         this.round = 0;
         this.scoreboard.setCounts(0, 0,0 ,0);
-
+        this.swingSpeed = [0.0, 0.0, 0.0];
     }
 
     _on_update(delta){
@@ -254,27 +254,20 @@ export class GameScene extends IScene{
         this.p.image(this.playball, 0, 0, this.p.width, this.p.height);
         Matter.Engine.update(this.engine);
         
-        if(!this.firstdata){
-            this.firstEuler = ReceiveArduino.euler;
-            this.oldEuler = this.firstEuler;
-            this.firstdata  = true;
-        }
-
-        // this.newEuler = ReceiveArduino.euler;
-         // 平滑過渡到新的 Euler 角度
-        // this.batEuler[0] = this.p.lerp((this.newEuler[0]-this.firstEuler[0]), (this.oldEuler[0]-this.firstEuler[0]), 0.1)
-        // this.batEuler[1] = this.p.lerp((this.newEuler[1]-this.firstEuler[1]), (this.oldEuler[1]-this.firstEuler[1]), 0.1), 
-        // this.batEuler[2] = this.p.lerp((this.newEuler[2]-this.firstEuler[2]), (this.oldEuler[2]-this.firstEuler[2]), 0.1), 
+        // console.log("euler: ", ReceiveArduino.correctionEuler[2], ", ", ReceiveArduino.correctionEuler[0], ", ", ReceiveArduino.correctionEuler[1]);
+        // console.log("euler: ", ReceiveArduino.euler[2], ", ", ReceiveArduino.euler[0], ", ", ReceiveArduino.euler[1]);
+        
+        // 獲得揮棒速度，最大值[16,384, 16,384, 16,384]和[-16,384, -16,384, -16,384]，+-為方向
+        this.swingSpeed[0] = ReceiveArduino.acceleration[0] - ReceiveArduino.correctionAcceleration[0];
+        this.swingSpeed[1] = ReceiveArduino.acceleration[1] - ReceiveArduino.correctionAcceleration[1];
+        this.swingSpeed[2] = ReceiveArduino.acceleration[2] - ReceiveArduino.correctionAcceleration[2];
+        console.log("swingSpeed: ", this.swingSpeed);
         
         // 旋轉 bat
-        console.log("ReceiveArduino.euler: ", ReceiveArduino.euler);
-        // console.log("this.batEuler: ", this.batEuler);
-        // this.bat.rotateEuler(this.firstEuler[0]-(this.newEuler[0]-this.oldEuler[0]),
-        //                     this.firstEuler[1]-(this.newEuler[1]-this.oldEuler[1]), 
-        //                     this.firstEuler[2]-(this.newEuler[2]-this.oldEuler[2]));
-        this.bat.rotateEuler(ReceiveArduino.euler[2]/180*this.p.PI, ReceiveArduino.euler[0]/180*this.p.PI, (-1*ReceiveArduino.euler[1])/180*this.p.PI);
-
-        this.oldEuler = this.newEuler;
+        this.bat.rotateEuler(ReceiveArduino.euler[2] - ReceiveArduino.correctionEuler[2], // 水平
+                            ReceiveArduino.euler[0] - ReceiveArduino.correctionEuler[0], // 垂直旋轉 -1
+                            ReceiveArduino.euler[1] - ReceiveArduino.correctionEuler[1]); // 畫大圓 -1
+        // this.bat.rotateQuaternion(ReceiveArduino.quat[0], ReceiveArduino.quat[1], ReceiveArduino.quat[2], ReceiveArduino.quat[3]);
        
     
       
