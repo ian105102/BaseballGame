@@ -62,11 +62,14 @@ export class TutorialScene extends IScene {
   }
 
   init() {
-    const p = this.p;
-    this.ribbons = [];
+    // ⛳️ Button
+    let func = () => {
+      SceneManager.instance.changeScene(SceneEnum.MENU);
+    };
+    this.ribbons = []; // 儲存所有彩帶
     this.ribbonColors = ['#e63946', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
 
-    this.video = p.createCapture(p.VIDEO).size(WIDTH, HEIGHT).hide();
+    this.video = this.p.createCapture(this.p.VIDEO).size(WIDTH, HEIGHT).hide();
     this.myCamera = new Camera(this.video.elt, {
       onFrame: async () => {
         if (!this.needVideo) return;
