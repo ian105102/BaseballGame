@@ -54,7 +54,7 @@ void loop() {
   // Serial.println(i%256);
   MPU();
   Serial.flush();  
-  delay(100);  // 每 0.5 秒發送一次資料
+  delay(33);  // 每 0.5 秒發送一次資料
 }
 
 void initMPU(){

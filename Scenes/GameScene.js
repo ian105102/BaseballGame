@@ -269,18 +269,22 @@ export class GameScene extends IScene{
         Matter.Engine.update(this.engine);
         
         // console.log("euler: ", ReceiveArduino.correctionEuler[2], ", ", ReceiveArduino.correctionEuler[0], ", ", ReceiveArduino.correctionEuler[1]);
-        // console.log("euler: ", ReceiveArduino.euler[2], ", ", ReceiveArduino.euler[0], ", ", ReceiveArduino.euler[1]);
+        console.log("euler: ", ReceiveArduino.euler[1], ", ", ReceiveArduino.euler[2], ", ", ReceiveArduino.euler[2]);
         
         // 獲得揮棒速度，最大值[16,384, 16,384, 16,384]和[-16,384, -16,384, -16,384]，+-為方向
         this.swingSpeed[0] = ReceiveArduino.acceleration[0] - ReceiveArduino.correctionAcceleration[0];
         this.swingSpeed[1] = ReceiveArduino.acceleration[1] - ReceiveArduino.correctionAcceleration[1];
         this.swingSpeed[2] = ReceiveArduino.acceleration[2] - ReceiveArduino.correctionAcceleration[2];
-        console.log("swingSpeed: ", this.swingSpeed);
+        // console.log("swingSpeed: ", this.swingSpeed);
         
         // 旋轉 bat
-        this.bat.rotateEuler(ReceiveArduino.euler[2] - ReceiveArduino.correctionEuler[2], // 水平
-                            ReceiveArduino.euler[0] - ReceiveArduino.correctionEuler[0], // 垂直旋轉 -1
-                            ReceiveArduino.euler[1] - ReceiveArduino.correctionEuler[1]); // 畫大圓 -1
+                            
+        // this.bat.rotateEuler(-1*(ReceiveArduino.euler[0] - ReceiveArduino.correctionEuler[0]), // 水平
+        //                     ReceiveArduino.euler[2] - ReceiveArduino.correctionEuler[2], // 垂直旋轉 -1  0
+        //                     -1*(ReceiveArduino.euler[1] - ReceiveArduino.correctionEuler[1])+this.p.PI); // 畫大圓 -1   2
+        this.bat.rotateEuler(-1*(ReceiveArduino.euler[0]), // 水平
+                            ReceiveArduino.euler[2], // 垂直旋轉 -1  0
+                            -1*ReceiveArduino.euler[1]+this.p.PI); // 畫大圓 -1   2
         // this.bat.rotateQuaternion(ReceiveArduino.quat[0], ReceiveArduino.quat[1], ReceiveArduino.quat[2], ReceiveArduino.quat[3]);
        
     
