@@ -6,6 +6,7 @@ import { WIDTH } from "../G.js";
 import { HEIGHT } from "../G.js";
 import { RectButton } from "../Objects/DrawableObj/Button/RectButton.js";
 import { DrawableText } from "../Objects/DrawableObj/Text/DrawableText.js";
+import { SoundManager } from "../AudioController/SoundManager.js";
 
 export class TutorialScene extends IScene {
   static instance = null;
@@ -23,6 +24,8 @@ export class TutorialScene extends IScene {
   constructor(p) {
     if (TutorialScene.instance) return TutorialScene.instance;
     super(p);
+    this.soundManager = new SoundManager(p);
+    this.soundManager.loadSounds();
     this.needVideo = true;
     this.video;
     this.myCamera;
@@ -62,7 +65,6 @@ export class TutorialScene extends IScene {
     const p = this.p;
     this.ribbons = [];
     this.ribbonColors = ['#e63946', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
-
     this.video = p.createCapture(p.VIDEO).size(WIDTH, HEIGHT).hide();
     this.myCamera = new Camera(this.video.elt, {
       onFrame: async () => {
@@ -152,7 +154,10 @@ export class TutorialScene extends IScene {
   }
 
   OnStop() { this.needVideo = false; }
-  OnStart() { this.needVideo = true; }
+  OnStart() { 
+    this.needVideo = true;
+    this.soundManager.playWhenReady("Theme", "loop"); 
+  }
 
   updateRibbons() {
     const tvX = (WIDTH - 512) / 2;
