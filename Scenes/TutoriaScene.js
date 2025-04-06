@@ -7,6 +7,7 @@ import { HEIGHT } from "../G.js";
 import { RectButton } from "../Objects/DrawableObj/Button/RectButton.js";
 import { DrawableText } from "../Objects/DrawableObj/Text/DrawableText.js";
 
+import ReceiveArduino from "../ArduinoConnectJS.js"
     
 
 export class TutorialScene extends IScene {
@@ -36,9 +37,9 @@ export class TutorialScene extends IScene {
 
   init() {
     // ⛳️ Button
-    let func = () => {
-      SceneManager.instance.changeScene(SceneEnum.MENU);
-    };
+    // let func = () => {
+    //   SceneManager.instance.changeScene(SceneEnum.MENU);
+    // };
     this.ribbons = []; // 儲存所有彩帶
     this.ribbonColors = ['#e63946', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
     this.maskHoverOffset = 0;
@@ -67,6 +68,9 @@ export class TutorialScene extends IScene {
       height: HEIGHT,
     }).start();
 
+    this.correctionTime = 5*60; // 秒數*幀數
+    this.countdownText = null;
+    this.hintText = null;
   }
 
   draw() {
@@ -121,6 +125,46 @@ export class TutorialScene extends IScene {
   
     // 指標樣式
     p.cursor(hoveringMask ? p.HAND : p.ARROW);
+
+
+    // 校準球棒角度
+    console.log("euler: ", ReceiveArduino.euler[2], ", ", ReceiveArduino.euler[0], ", ", ReceiveArduino.euler[1]);
+    if(this.correctionTime % 60 == 0 & ReceiveArduino.arduinoConnected){
+      // 先移除舊的文字
+      if (this.countdownText) {
+        this.remove(this.countdownText);
+      }
+      let text;
+      if(this.correctionTime <= 0){
+        ReceiveArduino.correctionQurt = ReceiveArduino.quat;
+        ReceiveArduino.correctionEuler = ReceiveArduino.euler;
+        ReceiveArduino.correctionAcceleration = ReceiveArduino.acceleration;
+        text = new DrawableText(this.p, "完成校正！", 50);
+      } else {
+        text = new DrawableText(this.p, "校正倒數：" + String(this.correctionTime/60), 40);
+      }
+      text.position.x = WIDTH / 2;
+      text.position.y = HEIGHT / 2;
+      text.font = this.iansuiFont; // ✅ 套用 Iansui 字體
+      this.add(text);
+      // 記住這個文字
+      this.countdownText = text;
+    }
+
+
+    let correctionText;
+    if(ReceiveArduino.arduinoConnected){
+      this.correctionTime--;
+      correctionText = new DrawableText(this.p, "將球棒直立以校正角度\n並請勿大幅度晃動", 50);
+    } else {
+      correctionText = new DrawableText(this.p, "Arduino連接中...", 50);
+    }
+    this.remove(this.hintText);
+    correctionText.position.x = WIDTH / 2;
+    correctionText.position.y = HEIGHT*0.7;
+    correctionText.font = this.iansuiFont; // ✅ 套用 Iansui 字體
+    this.add(correctionText);
+    this.hintText = correctionText;
   
     super.draw();
   }
