@@ -186,7 +186,7 @@ export class MenuScene extends IScene {
     const p = this.p;
     if (p.mouseButton === p.LEFT) {
       if (this.isMouseOver(this.ballImg, this.ballBtn)) {
-        SceneManager.instance.changeScene(SceneEnum.GAME);
+        //SceneManager.instance.changeScene(SceneEnum.GAME);
         if(ReceiveArduino.arduinoConnected){
           this.playing = true;
           SceneManager.instance.changeScene(SceneEnum.GAME);
