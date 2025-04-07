@@ -37,6 +37,7 @@ export class SoundManager {
         "Wrong.mp3",
         "一出局AI.mp3",
         "一壘安打AI.mp3",
+        "三出局AI.mp3",
         "三壘安打AI.mp3",
         "三振出局AI.mp3",
         "二壘安打AI.mp3",
