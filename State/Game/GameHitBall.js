@@ -375,8 +375,8 @@ export class GameHitBall extends GameFlowBase {
             this.system.soundManager.playWhenReady("兩出局AI", "play");
             this.system.ResultShowtext.text = "二出局!";
         } else if(this.system.outPoint ==3){
-            this.system.soundManager.playWhenReady("三振出局AI", "play");
-            this.system.ResultShowtext.text = "三振出局!";
+            this.system.soundManager.playWhenReady("三出局AI", "play");
+            this.system.ResultShowtext.text = "三出局!";
 
         }
     }
