@@ -46,6 +46,7 @@ export class SoundManager {
         "好球AI.mp3",
         "安打AI.mp3",
         "滾地球AI.mp3",
+       
       ];
   
       for (const fileName of soundFiles) {
