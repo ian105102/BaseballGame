@@ -18,6 +18,8 @@ export class GameHitBall extends GameFlowBase {
         this.isHitBaseball = false;
         this.isBadBall = false;
         this.isRollingBall = false;
+
+        this.haveOutPoint = false;
         this.hitType = BaseballPlay.NONE;
    
     }
@@ -134,14 +136,14 @@ export class GameHitBall extends GameFlowBase {
     }
 
     RandomPoint(batSpeed , hitpoint ,size ){
-        console.log("batSpeed", batSpeed);
+       
         let randomPoints = [];
         let type = BaseballPlay.HOME_RUN;
         let endSize = 0;
         randomPoints.push({x: hitpoint.x, y: hitpoint.y});
         randomPoints.push({x: hitpoint.x, y: hitpoint.y });
         randomPoints.push({x: hitpoint.x, y: hitpoint.y });
-        if(batSpeed >4000){   // home run
+        if(batSpeed >12000){   // home run
             this.hitType = BaseballPlay.HOME_RUN;
             
             randomPoints.push({x: hitpoint.x, y: hitpoint.y });
@@ -158,7 +160,7 @@ export class GameHitBall extends GameFlowBase {
 
             this.isRollingBall = false;
             
-        }else if(batSpeed > 2000){  //一般安打
+        }else if(batSpeed > 4000){  //一般安打
 
             this.hitType = BaseballPlay.BASE_HIT;
             randomPoints.push({x: hitpoint.x, y: hitpoint.y });
@@ -200,9 +202,9 @@ export class GameHitBall extends GameFlowBase {
 
     HitBaseball(hitPoint , size ,startVelocity ){  
 
-       
+        this.system.soundManager.playWhenReady("hit1", "play");
         let randomPoints = this.RandomPoint(this.system.swingMagnitude, hitPoint , size); // 這裡輸入從arduino接收的速度
-  
+        this.CalculateScore();
         this.midPoint = {
             x: this.system.baseball.position.x,
             y: this.system.baseball.position.y
@@ -234,9 +236,8 @@ export class GameHitBall extends GameFlowBase {
         ); 
     }
     _onHitTheBall(){
-        this.system.soundManager.playWhenReady("hit1", "play");
+     
         this.system.baseball.isActive = false;
-        this.CalculateScore();
         this.system.GeneratorManager.start(this.next());
     }
     _onSkipTheBall(){
@@ -249,18 +250,22 @@ export class GameHitBall extends GameFlowBase {
      
         if(ballType == BaseballPlay.GROUND_BALL){
             this.system.ResultShowtext.text = "滾地球!";
-            this.system.point +=1;
+            this.system.outPoint++;
+            this.haveOutPoint = true;
+            this.system.soundManager.playWhenReady("滾地球AI", "play");
             return; 
         }
         if(ballType == BaseballPlay.HOME_RUN){
             this.system.soundManager.playWhenReady("Crowd Cheer", "play");
+            this.system.soundManager.playWhenReady("全壘打AI", "play");
             this.system.ResultShowtext.text = "全壘打!";
             this.system.point +=3;
             return; 
         }
         if(ballType == BaseballPlay.BASE_HIT){
             this.system.ResultShowtext.text = "安打!";
-            this.system.point +=2;
+            this.system.soundManager.playWhenReady("安打AI", "play");
+            this.system.point +=1;
             return; 
         }
         return; 
@@ -284,19 +289,23 @@ export class GameHitBall extends GameFlowBase {
             console.log("好球");
             this.system.strikePoint++;
             this.system.ResultShowtext.text = "好球!";
+            this.system.soundManager.playWhenReady("好球AI", "play");
             return;
         }
         if(this.isBadBall){
             console.log("壞球");
             this.system.ResultShowtext.text = "壞球!";
+            this.system.soundManager.playWhenReady("壞球AI", "play");
             this.system.ballPoint++;
         }else{
             console.log("好球");
             this.system.ResultShowtext.text = "好球!";
+            this.system.soundManager.playWhenReady("好球AI", "play");
             this.system.strikePoint++;
         }
     }
     *next(){
+        yield* this.timer.delay(1000);
         this.system.hitPointUi.isActive = false;
         const AtBatOver = this.AtBatOver(this.isHitBaseball , this.isRollingBall);
         if(AtBatOver == 1){
@@ -325,21 +334,23 @@ export class GameHitBall extends GameFlowBase {
     AtBatOver(ishit) {
         console.log("AtBatOver", this.system.strikePoint, this.system.ballPoint, this.system.outPoint);
         if (this.system.outPoint >= 3) {
-            this.system.ResultShowtext.text = "OUT!";
+            this.out();
             return 2; // 結束比賽
         }
+        
+        this.out();
         if(ishit){
             return 1;
         }
- 
+        
         if (this.system.strikePoint >= 3) {
             this.system.strikePoint = 0;
             this.system.ballPoint = 0;
 
             this.system.outPoint++;
-            this.system.ResultShowtext.text = "OUT!";
+            this.haveOutPoint = true;
+            this.out();
             if (this.system.outPoint >= 3) {
-                this.system.ResultShowtext.text = "OUT!";
                 return 2; // 結束比賽
             }
             return 1; // 換下一位打者
@@ -354,6 +365,20 @@ export class GameHitBall extends GameFlowBase {
         }
 
         return 0; // 這位打者還沒結束打擊
+    }
+    out(){
+        if(!this.haveOutPoint) return;
+        if(this.system.outPoint ==1  ){
+            this.system.ResultShowtext.text = "一出局!";
+            this.system.soundManager.playWhenReady("一出局AI", "play");
+        }else if(this.system.outPoint ==2){
+            this.system.soundManager.playWhenReady("兩出局AI", "play");
+            this.system.ResultShowtext.text = "二出局!";
+        } else if(this.system.outPoint ==3){
+            this.system.soundManager.playWhenReady("三振出局AI", "play");
+            this.system.ResultShowtext.text = "三振出局!";
+
+        }
     }
     update(){
 
