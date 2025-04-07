@@ -61,10 +61,7 @@ export class TutorialScene extends IScene {
       );
       rule.position.x = WIDTH / 2 - 200;
       rule.position.y = HEIGHT / 2 + 80;
-      rule.strokeWeight = 3;
-      rule.strokeColor = p.color(255);
-      rule.fillColor = p.color(0);
-      this.textObjects.push(rule);
+      this.add(rule);
     }
   }
 
@@ -167,7 +164,6 @@ export class TutorialScene extends IScene {
       text.position.x = WIDTH - 400;
       text.position.y = 100;
       this.add(text);
-      // 記住這個文字
       this.countdownText = text;
     }
 
@@ -182,7 +178,6 @@ export class TutorialScene extends IScene {
     this.remove(this.hintText);
     correctionText.position.x = WIDTH -400;
     correctionText.position.y = 200;
-    correctionText.font = this.iansuiFont; // ✅ 套用 Iansui 字體
     this.add(correctionText);
     this.hintText = correctionText;
   

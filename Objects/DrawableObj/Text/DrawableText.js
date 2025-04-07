@@ -1,28 +1,41 @@
 import { IObject } from "../../IObject.js";
 
-
 export class DrawableText extends IObject {
     constructor(p, text, text_size, font = null) {
         super(p);
+        this.p = p;
         this.text = text;
         this.text_size = text_size;
-        this.font = font; // 新增字體參數
+        this.font = font;
+
+        this.fillColor = p.color(0);         // 黑色填色
+        this.strokeColor = p.color(255);     // 白色描邊
+        this.strokeWeight = 3;               // 預設無描邊
     }
 
     _on_draw() {
-        this.p.push(); // 保護繪圖狀態
-
-        this.p.strokeWeight(1);
-        this.p.textAlign(this.p.LEFT);
-        this.p.textSize(this.text_size);
+        const p = this.p;
+        p.push();
 
         if (this.font) {
-            this.p.textFont(this.font); // 套用字體
+            p.textFont(this.font);
         }
 
-        this.p.text(this.text, 0, 0);
+        p.textAlign(p.LEFT);
+        p.textSize(this.text_size);
 
-        this.p.pop(); // 還原狀態
+        // ✅ 使用樣式參數
+        if (this.strokeWeight > 0) {
+            p.stroke(this.strokeColor);
+            p.strokeWeight(this.strokeWeight);
+        } else {
+            p.noStroke();
+        }
+
+        p.fill(this.fillColor);
+        p.text(this.text, 0, 0);
+
+        p.pop();
     }
 
     _on_update(delta) {
